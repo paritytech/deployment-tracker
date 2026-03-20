@@ -112,7 +112,9 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool) -> Result
     }
 
     // Process each PR
-    for (&pr_number, tags) in &pr_tags {
+    let total_prs = pr_tags.len();
+    for (i, (&pr_number, tags)) in pr_tags.iter().enumerate() {
+        log::info!("[{}/{total_prs}] PR #{pr_number}", i + 1);
         let pr_node_id = match get_pr_node_id(gh, SDK_OWNER, SDK_REPO, pr_number).await {
             Ok(id) => id,
             Err(e) => {
