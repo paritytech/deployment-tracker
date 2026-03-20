@@ -21,23 +21,37 @@ impl GitHubClient {
         }
     }
 
-    /// GET a URL and deserialize the JSON response.
-    pub async fn get_json<T: DeserializeOwned>(&self, url: &str) -> Result<T> {
-        let resp = self
-            .client
-            .get(url)
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .header(USER_AGENT, "tracker")
-            .header(ACCEPT, "application/vnd.github.v3+json")
-            .send()
-            .await?;
+    /// Exponential backoff wait time for rate limit retries.
+    fn rate_limit_wait(attempt: u32) -> u64 {
+        60 * (1 << attempt).min(8)
+    }
 
-        let status = resp.status();
-        if !status.is_success() {
-            let body = resp.text().await.unwrap_or_default();
-            bail!("GET {url} returned {status}: {body}");
+    /// GET a URL and deserialize the JSON response, with rate limit retry.
+    pub async fn get_json<T: DeserializeOwned>(&self, url: &str) -> Result<T> {
+        for attempt in 0..5 {
+            let resp = self
+                .client
+                .get(url)
+                .header(AUTHORIZATION, format!("Bearer {}", self.token))
+                .header(USER_AGENT, "tracker")
+                .header(ACCEPT, "application/vnd.github.v3+json")
+                .send()
+                .await?;
+
+            let status = resp.status();
+            if !status.is_success() {
+                let body = resp.text().await.unwrap_or_default();
+                if status == reqwest::StatusCode::FORBIDDEN || status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+                    let wait = Self::rate_limit_wait(attempt);
+                    log::warn!("Rate limited on {url} (HTTP {status}), retrying in {wait}s (attempt {}/5)", attempt + 1);
+                    tokio::time::sleep(std::time::Duration::from_secs(wait)).await;
+                    continue;
+                }
+                bail!("GET {url} returned {status}: {body}");
+            }
+            return Ok(resp.json().await?);
         }
-        Ok(resp.json().await?)
+        bail!("GET {url} rate limit exceeded after 5 retries")
     }
 
     /// Compare two refs, returning the full JSON response.
@@ -95,33 +109,50 @@ impl GitHubClient {
         Ok(resp.text().await?)
     }
 
-    /// Execute a GraphQL query.
+    /// Execute a GraphQL query with rate limit retry.
     pub async fn graphql_query(&self, query: &str, variables: Value) -> Result<Value> {
         let body = serde_json::json!({
             "query": query,
             "variables": variables,
         });
 
-        let resp = self
-            .client
-            .post("https://api.github.com/graphql")
-            .header(AUTHORIZATION, format!("Bearer {}", self.token))
-            .header(USER_AGENT, "tracker")
-            .json(&body)
-            .send()
-            .await?;
+        for attempt in 0..5 {
+            let resp = self
+                .client
+                .post("https://api.github.com/graphql")
+                .header(AUTHORIZATION, format!("Bearer {}", self.token))
+                .header(USER_AGENT, "tracker")
+                .json(&body)
+                .send()
+                .await?;
 
-        let status = resp.status();
-        if !status.is_success() {
-            let body = resp.text().await.unwrap_or_default();
-            bail!("GraphQL request returned {status}: {body}");
+            let status = resp.status();
+            if !status.is_success() {
+                let body = resp.text().await.unwrap_or_default();
+                if status == reqwest::StatusCode::FORBIDDEN || status == reqwest::StatusCode::TOO_MANY_REQUESTS {
+                    let wait = Self::rate_limit_wait(attempt);
+                    log::warn!("Rate limited (HTTP {status}), retrying in {wait}s (attempt {}/5)", attempt + 1);
+                    tokio::time::sleep(std::time::Duration::from_secs(wait)).await;
+                    continue;
+                }
+                bail!("GraphQL request returned {status}: {body}");
+            }
+
+            let result: Value = resp.json().await?;
+            if let Some(errors) = result.get("errors") {
+                let err_str = errors.to_string();
+                if err_str.contains("RATE_LIMIT") {
+                    let wait = Self::rate_limit_wait(attempt);
+                    log::warn!("GraphQL rate limited, retrying in {wait}s (attempt {}/5)", attempt + 1);
+                    tokio::time::sleep(std::time::Duration::from_secs(wait)).await;
+                    continue;
+                }
+                bail!("GraphQL errors: {errors}");
+            }
+            return Ok(result);
         }
 
-        let result: Value = resp.json().await?;
-        if let Some(errors) = result.get("errors") {
-            bail!("GraphQL errors: {errors}");
-        }
-        Ok(result)
+        bail!("GraphQL rate limit exceeded after 5 retries")
     }
 
     /// Get latest commit SHA on a branch.
