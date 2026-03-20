@@ -1,5 +1,4 @@
 use anyhow::{bail, Context, Result};
-use base64::Engine;
 use reqwest::header::{ACCEPT, AUTHORIZATION, USER_AGENT};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
@@ -52,34 +51,6 @@ impl GitHubClient {
             return Ok(resp.json().await?);
         }
         bail!("GET {url} rate limit exceeded after 5 retries")
-    }
-
-    /// Compare two refs, returning the full JSON response.
-    pub async fn compare_tags(&self, owner: &str, repo: &str, base: &str, head: &str) -> Result<Value> {
-        let url = format!(
-            "https://api.github.com/repos/{owner}/{repo}/compare/{base}...{head}"
-        );
-        self.get_json(&url).await
-    }
-
-    /// Fetch file content (base64-decoded) at a given ref.
-    pub async fn get_file_content(
-        &self,
-        owner: &str,
-        repo: &str,
-        path: &str,
-        git_ref: &str,
-    ) -> Result<String> {
-        let url = format!(
-            "https://api.github.com/repos/{owner}/{repo}/contents/{path}?ref={git_ref}"
-        );
-        let resp: Value = self.get_json(&url).await?;
-        let encoded = resp["content"]
-            .as_str()
-            .context("no content field")?
-            .replace('\n', "");
-        let bytes = base64::engine::general_purpose::STANDARD.decode(&encoded)?;
-        Ok(String::from_utf8(bytes)?)
     }
 
     /// Fetch raw file content (for large files that exceed the contents API limit).

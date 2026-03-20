@@ -13,42 +13,6 @@ macro_rules! require_token {
 }
 
 #[tokio::test]
-async fn github_compare() {
-    let gh = require_token!();
-    let compare = gh
-        .compare_tags(
-            "paritytech",
-            "polkadot-sdk",
-            "polkadot-stable2506-7",
-            "polkadot-stable2506-9",
-        )
-        .await
-        .unwrap();
-    let commits = compare["commits"].as_array().unwrap();
-    assert!(!commits.is_empty(), "compare should return commits");
-}
-
-#[tokio::test]
-async fn prdoc_fetch() {
-    let gh = require_token!();
-    // PR #7693 is a known prdoc with crates
-    let content = gh
-        .get_file_content(
-            "paritytech",
-            "polkadot-sdk",
-            "prdoc/pr_7693.prdoc",
-            "master",
-        )
-        .await
-        .unwrap();
-    let doc: serde_json::Value = serde_yaml::from_str(&content).unwrap();
-    assert!(
-        doc.get("crates").is_some(),
-        "prdoc should have crates section"
-    );
-}
-
-#[tokio::test]
 async fn downstream_cargo_lock() {
     let gh = require_token!();
     let content = gh

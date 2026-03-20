@@ -60,22 +60,6 @@ cat > "$STATE_PATH" <<'EOF'
     {
       "runtime": "Asset Hub",
       "short": "AH",
-      "repo": "paritytech/polkadot-sdk",
-      "branch": "master",
-      "cargo_lock_path": "Cargo.lock",
-      "cargo_toml_path": "cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml",
-      "spec_version_path": "cumulus/parachains/runtimes/assets/asset-hub-westend/src/lib.rs",
-      "network": "Westend",
-      "rpc": "https://westend-asset-hub-rpc.polkadot.io",
-      "ws": "wss://westend-asset-hub-rpc.polkadot.io",
-      "field_name": "AH Westend",
-      "block_explorer_url": "https://assethub-westend.subscan.io",
-      "in_repo": true,
-      "upgrades": []
-    },
-    {
-      "runtime": "Asset Hub",
-      "short": "AH",
       "repo": "polkadot-fellows/runtimes",
       "branch": "main",
       "cargo_lock_path": "Cargo.lock",

@@ -99,9 +99,11 @@ pub fn parse_spec_version(content: &str) -> Option<u64> {
 }
 
 /// Check on-chain spec versions and find new upgrades.
-pub async fn check_onchain(runtimes: &mut [Runtime]) -> Result<()> {
+/// Returns indices of runtimes that had new on-chain upgrades.
+pub async fn check_onchain(runtimes: &mut [Runtime]) -> Result<Vec<usize>> {
     log::info!("On-chain queries");
-    for runtime in runtimes.iter_mut() {
+    let mut upgraded = Vec::new();
+    for (idx, runtime) in runtimes.iter_mut().enumerate() {
         log::info!("{} ({}): connecting to {}", runtime.runtime, runtime.network, runtime.ws);
 
         let chain = match ChainClient::connect(&runtime.ws).await {
@@ -160,9 +162,10 @@ pub async fn check_onchain(runtimes: &mut [Runtime]) -> Result<()> {
             date: timestamp.to_rfc3339(),
             block_url,
         });
+        upgraded.push(idx);
     }
 
-    Ok(())
+    Ok(upgraded)
 }
 
 #[cfg(test)]

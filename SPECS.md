@@ -9,15 +9,14 @@ Each PR in the GitHub Project gets annotated with the release tag and deployment
 A system that maps the journey of a PR from "merged in polkadot-sdk" to "live on network X",
 by tracking crate version changes through the release pipeline and downstream runtime repos.
 
-The tracker runs as a cron-based GitHub Action in the [release-registry](https://github.com/paritytech/release-registry) repo. Each run:
+The tracker runs as a GitHub Action in the [deployment-tracker](https://github.com/paritytech/deployment-tracker) repo. It fetches [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) from the [release-registry](https://github.com/paritytech/release-registry) via the GitHub API. Each run:
 
-1. Reads [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) in [release-registry](https://github.com/paritytech/release-registry) to discover new release tags across all supported stable branches.
-2. For each new release tag, resolves contributing PRs and their crate version bumps using a local polkadot-sdk git checkout.
-3. Detects when downstream runtime repos (Paseo, Fellows) pick up those crate versions.
-4. Queries on-chain spec_version to determine deployment status.
-5. Annotates PRs with custom fields of a GitHub Project.
+1. Discovers new release tags and resolves contributing PRs and their crate version bumps using a local polkadot-sdk git checkout.
+2. Detects when downstream runtime repos (Paseo, Fellows) pick up those crate versions.
+3. Queries on-chain spec_version to determine deployment status.
+4. Annotates PRs with custom fields of a GitHub Project.
 
-All state is persisted in [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json), committed to [release-registry](https://github.com/paritytech/release-registry).
+All state is persisted in [`state.json`](https://github.com/paritytech/deployment-tracker/blob/main/state.json), committed to [deployment-tracker](https://github.com/paritytech/deployment-tracker).
 
 ```mermaid
 graph TB
@@ -28,7 +27,6 @@ graph TB
     end
 
     subgraph networks ["Live Networks"]
-        W["Westend AH"]
         P["Paseo AH"]
         K["Kusama AH"]
         D["Polkadot AH"]
@@ -39,7 +37,7 @@ graph TB
     RR -->|new tags| T
     SDK -->|crate diffs\nprdoc| T
     DR -->|Cargo.lock\nspec_version| T
-    W & P & K & D -->|on-chain\nspecVersion| T
+    P & K & D -->|on-chain\nspecVersion| T
 
     T -->|annotate PRs| GH["GitHub Project"]
     T -->|commit| ST["state.json"]
@@ -60,9 +58,10 @@ See [RELEASE.md](https://github.com/paritytech/polkadot-sdk/blob/master/docs/REL
 - Each crate publish gets a tag (e.g. [`polkadot-stable2512-2`](https://github.com/paritytech/polkadot-sdk/tree/polkadot-stable2512-2)) recorded in [release-registry](https://github.com/paritytech/release-registry/blob/main/releases-v1.json).
 - When crates are published from a stable branch, a post-release workflow moves prdoc files into versioned subdirectories (e.g. `prdoc/stable2512/`, `prdoc/stable2512-1/`). These directories on master are the authoritative record of which PRs belong to each release.
 - Downstream runtime repos ([`polkadot-fellows/runtimes`](https://github.com/polkadot-fellows/runtimes), [`paseo-network/runtimes`](https://github.com/paseo-network/runtimes)) consume crates from crates.io.
-- Some runtimes live inside polkadot-sdk itself (e.g. Westend Asset Hub). For these "in-repo" runtimes, every PR merged to master is already adopted, there is no separate downstream consumption step.
 
 ## Pipeline
+
+The tracker runs a four-step pipeline. State is saved after each step so progress is not lost on failure.
 
 ### Step 1: Discover new releases
 
@@ -70,36 +69,21 @@ The discover step requires a local polkadot-sdk git checkout, specified via the 
 
 On each run:
 
-- Fetch [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) from [release-registry](https://github.com/paritytech/release-registry).
-- For each non-deprecated stable branch, collect all patches with a published tag. Filter to tags published after `last_processed_tags_date` in [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json), skipping any already present in the `releases` array. After processing, set `last_processed_tags_date` to the max publish date among the processed tags.
+- Fetch [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) from [release-registry](https://github.com/paritytech/release-registry) via the GitHub API (no auth required, public repo).
+- Collect all published tags sorted by date. Filter to tags after `last_processed_tag` in state (by position in the sorted list), skipping any already present in the `releases` array. After processing, set `last_processed_tag` to the last processed tag name.
+- Returns the list of newly discovered release tags. PRs from these tags are marked dirty for annotation.
 
-For each new tag, the approach differs depending on whether this is the initial cut of a new stable branch or a subsequent patch:
+For each new tag:
 
-#### New stable branch cut (e.g. `polkadot-stable2512`)
-
-1. Read all prdoc files from `prdoc/stable2512/` on master. Each prdoc provides the PR number and affected crate names.
-2. For each affected crate, read its version from the Cargo.toml at the tag (`git show polkadot-stable2512:path/to/Cargo.toml`).
-3. Build the per-crate PR mapping directly from the prdocs.
-
-This avoids the massive cross-branch diff (400+ changed Cargo.toml files) that would result from comparing against the previous branch's last tag.
-
-#### Subsequent patch (e.g. `polkadot-stable2512-1`)
-
-1. Find the previous tag on the same branch (`polkadot-stable2512`).
-2. List changed Cargo.toml files between the two tags: `git diff --name-only polkadot-stable2512..polkadot-stable2512-1 -- */Cargo.toml`. Same-branch diffs are always small (~30 files).
+1. Find the previous tag on the same branch (or the latest tag from the previous branch for the first patch).
+2. List changed Cargo.toml files between the two tags: `git diff --name-only prev_tag..tag -- */Cargo.toml`.
 3. For each changed Cargo.toml, compare versions at both tags.
-4. Extract PR numbers from commit messages between the two tags: `git log polkadot-stable2512..polkadot-stable2512-1 --format=%s`. Backport commits follow the format `[stable2512] Backport #<original_PR> (#<backport_PR>)`. We extract the **original PR** number.
-5. Look up prdocs (from `prdoc/stable2512-1/` on master) to map PRs to crate names.
-
-### Step 2: Resolve PRs per crate using prdoc
-
-For each PR contributing to the release, look up its [prdoc](https://github.com/paritytech/polkadot-sdk/tree/master/prdoc) file (`pr_<number>.prdoc`). The prdoc's `crates` array lists which crates the PR modifies. Cross-reference this with the crates that had a version bump to build a per-crate PR list.
+4. Extract PR numbers from commit messages between the two tags: `git log prev_tag..tag --format=%s`. Backport commits follow the format `[stable2512] Backport #<original_PR> (#<backport_PR>)`. We extract the **original PR** number.
+5. Look up prdocs on master to map PRs to crate names. Cross-reference with crates that had a version bump to build a per-crate PR list.
 
 PRs without a prdoc (CI changes, docs, release automation) are skipped. They don't produce crate version changes and can't be mapped to any crate.
 
-The `published` timestamp for each crate is taken from the release publish date in [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) (same for all crates in a given release).
-
-Append a release entry to [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json).
+The `published` timestamp for each crate is taken from the release publish date in `releases-v1.json` (same for all crates in a given release).
 
 #### Example: [polkadot-stable2512-1](https://github.com/paritytech/polkadot-sdk/tree/polkadot-stable2512-1) -> [polkadot-stable2512-2](https://github.com/paritytech/polkadot-sdk/tree/polkadot-stable2512-2)
 
@@ -183,16 +167,18 @@ graph LR
 
 > **Note:** A PR can appear in releases from different stable branches (e.g. merged to master, then backported to stable2509 and stable2512). This is expected and correct. A PR can also appear under multiple crates within the same release if it modifies several crates.
 
-### Step 3: Detect downstream crate consumption
+### Step 2: Detect downstream crate consumption
 
 For each watched downstream repo, on each run:
 
-1. Fetch latest commit on the tracked branch. Compare against the runtime entry's `last_seen_commit` in [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json).
+1. Fetch latest commit on the tracked branch. Compare against the runtime entry's `last_seen_commit` in state.
 2. If new commits exist, fetch `Cargo.lock` and `Cargo.toml` to determine resolved crate versions and runtime dependencies.
-3. Match resolved versions against release artifacts at the per-crate level to find contributing PRs.
-4. For each PR, compute its deployment coverage: how many of the PR's crates (from its prdoc) are dependencies of this specific runtime, and how many of those have been updated to the release version. A crate is relevant if it appears in the runtime's `Cargo.toml` dependency tree (checked via `cargo_toml_path`). The resolved version comes from the repo-wide `Cargo.lock`. This avoids false positives from crates used by other runtimes in the same repo.
+3. Diff old vs new crate versions to detect which crates changed. Returns a `HashSet<CrateUpdate>` with the (crate name, new version) pairs.
+4. PRs associated with those crate updates are marked dirty for annotation.
 
-**In-repo runtimes** (e.g. Westend Asset Hub in polkadot-sdk, configured with `"in_repo": true`): skip Cargo.lock/Cargo.toml fetching and version matching entirely. Since every PR merged to master is already in the runtime's source tree, all PRs are treated as adopted. Only the `spec_version` is fetched from the source code, to feed the status state machine.
+A crate is relevant if it appears in the runtime's `Cargo.toml` dependency tree (checked via `cargo_toml_path`). The resolved version comes from the repo-wide `Cargo.lock`. This avoids false positives from crates used by other runtimes in the same repo.
+
+The `spec_version` constant is also parsed from the runtime's `lib.rs` at the detected commit, to feed the status state machine.
 
 #### Example: paseo-network/runtimes and pallet-revive
 
@@ -214,7 +200,7 @@ graph TB
 
     subgraph downstream ["Downstream Cargo.lock"]
         DC1["pallet-revive@0.11.3\n(not updated)"]
-        DC2["frame-system@40.1.0\n(updated ✓)"]
+        DC2["frame-system@40.1.0\n(updated)"]
         DC3["sc-network@0.55.1\n(not in PR's prdoc)"]
     end
 
@@ -232,21 +218,30 @@ graph TB
     style R fill:#e67e22,color:#fff
 ```
 
-### Step 4: Determine expected spec_version
+### Step 3: Confirm on-chain deployment
 
-When a downstream repo picks up new crate versions, parse the runtime's `lib.rs` at the detected commit to extract the `spec_version` constant.
+Connect to each tracked network via WebSocket RPC. Query `state_getRuntimeVersion` to get the current on-chain `specVersion`.
 
-The parsed spec_version may not have been bumped yet. To detect this, compare it against the on-chain version: if they match and the on-chain upgrade predates the crate publish date, the downstream hasn't bumped the version yet. In this case the expected version is unknown, only that it will be greater than the current on-chain version.
+When a new runtime upgrade is detected (spec version increased since last run), binary-search for the upgrade block and record it in the runtime entry's `upgrades` array with the block number, block hash, and date (from the block timestamp).
 
-### Step 5: Confirm on-chain deployment
+Returns which runtimes had new upgrades. PRs whose crates are dependencies of those runtimes are marked dirty for annotation.
 
-Query `state_getRuntimeVersion` via RPC for each tracked network. Compare the on-chain `specVersion` against the expected spec_version from Step 4.
-
-When a new runtime upgrade is detected (spec version increased since last run), record it in the runtime entry's `upgrades` array with the block number, block hash, and date (from the block timestamp). This upgrade history is persisted in [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json) and provides a timeline of when each spec version went live.
-
-### Step 6: Annotate PRs in GitHub Project V2
+### Step 4: Annotate PRs in GitHub Project V2
 
 Use the GitHub GraphQL API to add each PR to the project (if not already present) and set custom field values.
+
+**Incremental annotation:** Only "dirty" PRs are annotated each run. A PR is dirty when:
+- It belongs to a newly discovered release tag (from step 1)
+- One of its crates was updated in a downstream runtime (from step 2)
+- A runtime that depends on its crates had an on-chain upgrade (from step 3)
+- On bootstrap (no `last_processed_tag` in state), all PRs are annotated
+
+**Batched mutations:** PRs are processed in batches of 20 using GraphQL aliases to reduce API calls:
+- Batch PR node ID lookups (20 per query)
+- Batch add-to-project mutations (20 per mutation)
+- Batch field value updates (50 per mutation)
+
+**Rate limit handling:** GraphQL and REST API calls retry up to 5 times on rate limit errors with exponential backoff starting at 60s.
 
 Fields per PR:
 
@@ -263,13 +258,13 @@ Fields per PR:
 | `v<spec_version>` | Enacted on-chain, all relevant crates adopted |
 | `v<spec_version> (N/M crates)` | Enacted on-chain, only N of M relevant crates included |
 
-Only crates that are dependencies of the specific runtime (per its `Cargo.toml`) count toward the total. For in-repo runtimes, all crates from the PR are considered relevant (no dependency filtering).
+Only crates that are dependencies of the specific runtime (per its `Cargo.toml`) count toward the total.
 
 ![Status examples across the PR lifecycle](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-status-examples.png)
 
 ## State File
 
-File: [`state.json`](https://github.com/paritytech/release-registry/blob/main/tracker/state.json)
+File: [`state.json`](https://github.com/paritytech/deployment-tracker/blob/main/state.json)
 
 ```json
 {
@@ -291,29 +286,9 @@ File: [`state.json`](https://github.com/paritytech/release-registry/blob/main/tr
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "in_repo": false,
       "last_seen_commit": "fb8fcad5...",
       "upgrades": [
         { "spec_version": 2000005, "block_number": 4717640, "block_hash": "0x3315...", "date": "2026-01-27T11:28:00+00:00", "block_url": "https://assethub-paseo.subscan.io/block/4717640" }
-      ]
-    },
-    {
-      "runtime": "Asset Hub",
-      "short": "AH",
-      "repo": "paritytech/polkadot-sdk",
-      "branch": "master",
-      "cargo_lock_path": "Cargo.lock",
-      "cargo_toml_path": "cumulus/parachains/runtimes/assets/asset-hub-westend/Cargo.toml",
-      "spec_version_path": "cumulus/parachains/runtimes/assets/asset-hub-westend/src/lib.rs",
-      "network": "Westend",
-      "rpc": "https://westend-asset-hub-rpc.polkadot.io",
-      "ws": "wss://westend-asset-hub-rpc.polkadot.io",
-      "field_name": "AH Westend",
-      "block_explorer_url": "https://assethub-westend.subscan.io",
-      "in_repo": true,
-      "last_seen_commit": "fa14a5ad...",
-      "upgrades": [
-        { "spec_version": 1022001, "block_number": 13994902, "block_hash": "0xf01b...", "date": "2026-03-18T09:41:18+00:00", "block_url": "https://assethub-westend.subscan.io/block/13994902" }
       ]
     },
     {
@@ -347,7 +322,7 @@ File: [`state.json`](https://github.com/paritytech/release-registry/blob/main/tr
       "upgrades": []
     }
   ],
-  "last_processed_tags_date": "2026-03-10",
+  "last_processed_tag": "polkadot-stable2512-2",
   "releases": [
     {
       "tag": "polkadot-stable2512-2",

@@ -96,12 +96,38 @@ impl Runner {
             .collect()
     }
 
-    /// Collect all PRs from all releases.
-    fn all_prs(&self) -> HashSet<u64> {
+    /// Find PRs associated with the given crate version updates.
+    fn prs_from_crate_updates(&self, updates: &HashSet<downstream::CrateUpdate>) -> HashSet<u64> {
         self.state.releases.iter()
-            .flat_map(|r| r.crates.iter().flat_map(|c| &c.prs))
+            .flat_map(|r| &r.crates)
+            .filter(|c| updates.contains(&downstream::CrateUpdate {
+                name: c.name.clone(),
+                version: c.version.clone(),
+            }))
+            .flat_map(|c| &c.prs)
             .copied()
             .collect()
+    }
+
+    /// Find PRs whose crates are dependencies of the given runtimes.
+    fn prs_from_runtimes(&self, runtime_indices: &[usize]) -> HashSet<u64> {
+        let deps: HashSet<&str> = runtime_indices.iter()
+            .flat_map(|&i| self.state.runtimes[i].downstream.deps.iter().map(|s| s.as_str()))
+            .collect();
+
+        self.state.releases.iter()
+            .flat_map(|r| &r.crates)
+            .filter(|c| deps.contains(c.name.as_str()))
+            .flat_map(|c| &c.prs)
+            .copied()
+            .collect()
+    }
+
+    fn add_dirty(&mut self, prs: HashSet<u64>) {
+        match &mut self.dirty_prs {
+            Some(set) => set.extend(prs),
+            None => {} // None means all — already covers these
+        }
     }
 
     async fn run_step(&mut self, step: Step) -> Result<()> {
@@ -112,23 +138,29 @@ impl Runner {
                 )?;
                 if !new_tags.is_empty() {
                     let new_prs = self.prs_from_tags(&new_tags);
-                    log::info!("{} PRs from {} new release tag(s)", new_prs.len(), new_tags.len());
-                    match &mut self.dirty_prs {
-                        Some(set) => set.extend(new_prs),
-                        None => {} // None means all — already covers these
-                    }
+                    log::info!("{} dirty PRs from {} new release tag(s)", new_prs.len(), new_tags.len());
+                    self.add_dirty(new_prs);
                 }
                 Ok(())
             }
             Step::Downstream => {
-                let changed = downstream::check_downstream(&mut self.state, &self.gh).await?;
-                if changed {
-                    // Downstream state changed — all PRs need status recomputation
-                    self.dirty_prs = None;
+                let updates = downstream::check_downstream(&mut self.state, &self.gh).await?;
+                if !updates.is_empty() {
+                    let prs = self.prs_from_crate_updates(&updates);
+                    log::info!("{} dirty PRs from {} crate update(s)", prs.len(), updates.len());
+                    self.add_dirty(prs);
                 }
                 Ok(())
             }
-            Step::Onchain => onchain::check_onchain(&mut self.state.runtimes).await,
+            Step::Onchain => {
+                let upgraded = onchain::check_onchain(&mut self.state.runtimes).await?;
+                if !upgraded.is_empty() {
+                    let prs = self.prs_from_runtimes(&upgraded);
+                    log::info!("{} dirty PRs from {} runtime upgrade(s)", prs.len(), upgraded.len());
+                    self.add_dirty(prs);
+                }
+                Ok(())
+            }
             Step::Annotate => {
                 project::annotate(&self.state, &self.gh, self.dry_run, self.dirty_prs.as_ref()).await
             }

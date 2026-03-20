@@ -90,9 +90,10 @@ pub fn discover_and_resolve(
     });
     let new_tags: Vec<_> = match cutoff_idx {
         Some(idx) => tags[idx + 1..].iter().collect(),
+        // Bootstrap: no last_processed_tag — process all
         None if state.last_processed_tag.is_none() => tags.iter().collect(),
-        // last_processed_tag set but not found — skip (already fully processed)
-        Some(_) | None => {
+        // last_processed_tag set but not found in current tags — nothing new
+        None => {
             log::info!("No new tags to process");
             return Ok(Vec::new());
         }
