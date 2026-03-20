@@ -111,36 +111,68 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool) -> Result
         runtime_field_ids.insert(runtime.field_name.clone(), field_id);
     }
 
-    // Process each PR
-    let total_prs = pr_tags.len();
-    for (i, (&pr_number, tags)) in pr_tags.iter().enumerate() {
-        log::info!("[{}/{total_prs}] PR #{pr_number}", i + 1);
-        let pr_node_id = match get_pr_node_id(gh, SDK_OWNER, SDK_REPO, pr_number).await {
-            Ok(id) => id,
-            Err(e) => {
-                log::warn!("PR #{pr_number}: could not fetch node ID: {e}");
-                continue;
-            }
-        };
+    // Collect all field IDs for batch updates: "Release Tags" + per-runtime fields
+    let mut all_field_ids: Vec<(&str, &str)> = vec![("Release Tags", &release_tags_field)];
+    for runtime in &state.runtimes {
+        if let Some(fid) = runtime_field_ids.get(&runtime.field_name) {
+            all_field_ids.push((&runtime.field_name, fid));
+        }
+    }
 
-        // Add PR to project
-        let item_id = add_item_to_project(gh, &project.project_id, &pr_node_id).await?;
+    // Process PRs in batches
+    let pr_list: Vec<_> = pr_tags.iter().collect();
+    let total_prs = pr_list.len();
+    let batch_size = 20;
 
-        // Set "Release Tags" field
-        let tags_value = tags.join(", ");
-        set_field_value(gh, &project.project_id, &item_id, &release_tags_field, &tags_value).await?;
+    for (batch_idx, batch) in pr_list.chunks(batch_size).enumerate() {
+        let start = batch_idx * batch_size + 1;
+        let end = start + batch.len() - 1;
+        log::info!("[{start}-{end}/{total_prs}] Fetching PR node IDs...");
 
-        // Set per-runtime status fields (always set, even empty, to clear stale values)
-        let crates = pr_crates.get(&pr_number);
-        for runtime in &state.runtimes {
-            if let Some(field_id) = runtime_field_ids.get(&runtime.field_name) {
-                let status = compute_runtime_status(runtime, crates);
-                set_field_value(gh, &project.project_id, &item_id, field_id, &status).await?;
+        // Step 1: Batch fetch PR node IDs
+        let pr_numbers: Vec<u64> = batch.iter().map(|(&n, _)| n).collect();
+        let node_ids = batch_get_pr_node_ids(gh, SDK_OWNER, SDK_REPO, &pr_numbers).await?;
+
+        // Filter to PRs we got node IDs for
+        let resolved: Vec<_> = batch.iter()
+            .filter_map(|(&pr_num, tags)| {
+                node_ids.get(&pr_num).map(|node_id| (pr_num, tags, node_id.as_str()))
+            })
+            .collect();
+
+        if resolved.is_empty() {
+            continue;
+        }
+
+        // Step 2: Batch add items to project
+        log::info!("[{start}-{end}/{total_prs}] Adding {} PRs to project...", resolved.len());
+        let content_ids: Vec<_> = resolved.iter().map(|(_, _, nid)| *nid).collect();
+        let item_ids = batch_add_items_to_project(gh, &project.project_id, &content_ids).await?;
+
+        // Step 3: Batch set all field values
+        let mut field_updates = Vec::new();
+        for (i, &(pr_num, tags, _)) in resolved.iter().enumerate() {
+            let item_id = match item_ids.get(i) {
+                Some(id) => id.as_str(),
+                None => continue,
+            };
+
+            // Release Tags field
+            let tags_value = tags.join(", ");
+            field_updates.push((item_id.to_string(), release_tags_field.clone(), tags_value));
+
+            // Per-runtime status fields
+            let crates = pr_crates.get(&pr_num);
+            for runtime in &state.runtimes {
+                if let Some(field_id) = runtime_field_ids.get(&runtime.field_name) {
+                    let status = compute_runtime_status(runtime, crates);
+                    field_updates.push((item_id.to_string(), field_id.clone(), status));
+                }
             }
         }
 
-        let status_str = format_status_summary(state, &pr_crates, pr_number);
-        log::debug!("PR #{pr_number}: {tags_value}{status_str}");
+        log::info!("[{start}-{end}/{total_prs}] Setting {} field values...", field_updates.len());
+        batch_set_field_values(gh, &project.project_id, &field_updates).await?;
     }
 
     Ok(())
@@ -304,93 +336,101 @@ async fn create_text_field(gh: &GitHubClient, project_id: &str, name: &str) -> R
         .context("no field ID in response")
 }
 
-/// Fetch the GraphQL node ID of a pull request.
-async fn get_pr_node_id(gh: &GitHubClient, owner: &str, repo: &str, number: u64) -> Result<String> {
-    let query = r#"
-        query($owner: String!, $repo: String!, $number: Int!) {
-            repository(owner: $owner, name: $repo) {
-                pullRequest(number: $number) {
-                    id
-                }
-            }
+/// Batch fetch PR node IDs using GraphQL aliases.
+async fn batch_get_pr_node_ids(
+    gh: &GitHubClient,
+    owner: &str,
+    repo: &str,
+    numbers: &[u64],
+) -> Result<HashMap<u64, String>> {
+    if numbers.is_empty() {
+        return Ok(HashMap::new());
+    }
+
+    let fragments: Vec<String> = numbers
+        .iter()
+        .enumerate()
+        .map(|(i, &n)| {
+            format!(
+                "pr{i}: repository(owner: {owner:?}, name: {repo:?}) {{ pullRequest(number: {n}) {{ id }} }}"
+            )
+        })
+        .collect();
+
+    let query = format!("query {{ {} }}", fragments.join("\n"));
+    let resp = gh.graphql_query(&query, serde_json::json!({})).await?;
+
+    let mut result = HashMap::new();
+    for (i, &n) in numbers.iter().enumerate() {
+        if let Some(id) = resp["data"][format!("pr{i}")]["pullRequest"]["id"].as_str() {
+            result.insert(n, id.to_string());
+        } else {
+            log::warn!("PR #{n}: could not fetch node ID");
         }
-    "#;
-
-    let vars = serde_json::json!({
-        "owner": owner,
-        "repo": repo,
-        "number": number as i64,
-    });
-
-    let resp = gh.graphql_query(query, vars).await?;
-    resp["data"]["repository"]["pullRequest"]["id"]
-        .as_str()
-        .map(String::from)
-        .context("no PR node ID")
+    }
+    Ok(result)
 }
 
-/// Add a content node (PR/issue) to a Project V2, returning the item ID.
-async fn add_item_to_project(
+/// Batch add content nodes to a Project V2, returning item IDs in order.
+async fn batch_add_items_to_project(
     gh: &GitHubClient,
     project_id: &str,
-    content_id: &str,
-) -> Result<String> {
-    let query = r#"
-        mutation($projectId: ID!, $contentId: ID!) {
-            addProjectV2ItemById(input: {
-                projectId: $projectId,
-                contentId: $contentId
-            }) {
-                item {
-                    id
-                }
-            }
-        }
-    "#;
+    content_ids: &[&str],
+) -> Result<Vec<String>> {
+    if content_ids.is_empty() {
+        return Ok(Vec::new());
+    }
 
-    let vars = serde_json::json!({
-        "projectId": project_id,
-        "contentId": content_id,
-    });
+    let fragments: Vec<String> = content_ids
+        .iter()
+        .enumerate()
+        .map(|(i, cid)| {
+            format!(
+                "a{i}: addProjectV2ItemById(input: {{ projectId: {project_id:?}, contentId: {cid:?} }}) {{ item {{ id }} }}"
+            )
+        })
+        .collect();
 
-    let resp = gh.graphql_query(query, vars).await?;
-    resp["data"]["addProjectV2ItemById"]["item"]["id"]
-        .as_str()
-        .map(String::from)
-        .context("no item ID in response")
+    let query = format!("mutation {{ {} }}", fragments.join("\n"));
+    let resp = gh.graphql_query(&query, serde_json::json!({})).await?;
+
+    let mut result = Vec::new();
+    for i in 0..content_ids.len() {
+        let id = resp["data"][format!("a{i}")]["item"]["id"]
+            .as_str()
+            .context(format!("no item ID for index {i}"))?;
+        result.push(id.to_string());
+    }
+    Ok(result)
 }
 
-/// Set a text field value on a project item.
-async fn set_field_value(
+/// Batch set text field values on project items.
+/// Each entry is (item_id, field_id, value).
+async fn batch_set_field_values(
     gh: &GitHubClient,
     project_id: &str,
-    item_id: &str,
-    field_id: &str,
-    value: &str,
+    updates: &[(String, String, String)],
 ) -> Result<()> {
-    let query = r#"
-        mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
-            updateProjectV2ItemFieldValue(input: {
-                projectId: $projectId,
-                itemId: $itemId,
-                fieldId: $fieldId,
-                value: { text: $value }
-            }) {
-                projectV2Item {
-                    id
-                }
-            }
-        }
-    "#;
+    if updates.is_empty() {
+        return Ok(());
+    }
 
-    let vars = serde_json::json!({
-        "projectId": project_id,
-        "itemId": item_id,
-        "fieldId": field_id,
-        "value": value,
-    });
+    // GitHub GraphQL has limits on mutation complexity, chunk to ~50 updates per call
+    for chunk in updates.chunks(50) {
+        let fragments: Vec<String> = chunk
+            .iter()
+            .enumerate()
+            .map(|(i, (item_id, field_id, value))| {
+                let escaped = value.replace('\\', "\\\\").replace('"', "\\\"");
+                format!(
+                    "f{i}: updateProjectV2ItemFieldValue(input: {{ projectId: {project_id:?}, itemId: {item_id:?}, fieldId: {field_id:?}, value: {{ text: \"{escaped}\" }} }}) {{ projectV2Item {{ id }} }}"
+                )
+            })
+            .collect();
 
-    gh.graphql_query(query, vars).await?;
+        let query = format!("mutation {{ {} }}", fragments.join("\n"));
+        gh.graphql_query(&query, serde_json::json!({})).await?;
+    }
     Ok(())
 }
 
