@@ -103,10 +103,15 @@ fn resolve_state_path(cli_path: Option<PathBuf>) -> PathBuf {
 const RELEASES_URL: &str =
     "https://raw.githubusercontent.com/paritytech/release-registry/main/releases-v1.json";
 
-/// Fetch releases-v1.json from the release-registry GitHub repo.
-async fn fetch_releases_json(gh: &github::GitHubClient) -> Result<releases::ReleasesJson> {
+/// Fetch releases-v1.json from the release-registry GitHub repo (public, no auth needed).
+async fn fetch_releases_json() -> Result<releases::ReleasesJson> {
     log::info!("Fetching releases-v1.json from release-registry");
-    gh.get_json(RELEASES_URL).await.context("failed to fetch releases-v1.json")
+    reqwest::get(RELEASES_URL)
+        .await
+        .context("failed to fetch releases-v1.json")?
+        .json()
+        .await
+        .context("failed to parse releases-v1.json")
 }
 
 /// Entry point: parse CLI args, load state, run pipeline steps, save state.
@@ -122,7 +127,7 @@ async fn main() -> Result<()> {
 
     log::info!("Loading state from {}", state_path.display());
     let state = state::State::load(&state_path)?;
-    let releases_json = fetch_releases_json(&gh).await?;
+    let releases_json = fetch_releases_json().await?;
 
     let single;
     let steps: &[Step] = match cli.step {
