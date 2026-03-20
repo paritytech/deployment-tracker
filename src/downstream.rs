@@ -7,8 +7,10 @@ use crate::onchain::parse_spec_version;
 use crate::state::State;
 
 /// Check downstream runtimes for crate consumption.
-pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<()> {
+/// Returns true if any runtime's commit changed (i.e. downstream state is new).
+pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<bool> {
     log::info!("Check downstream consumption");
+    let mut changed = false;
     for runtime in &mut state.runtimes {
         let (owner, repo) = parse_repo(&runtime.repo);
 
@@ -91,9 +93,10 @@ pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<()
         }
 
         runtime.last_seen_commit = Some(latest_commit);
+        changed = true;
     }
 
-    Ok(())
+    Ok(changed)
 }
 
 /// Split an `owner/repo` string into `(owner, repo)`.

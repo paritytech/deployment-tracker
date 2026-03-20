@@ -18,6 +18,7 @@ mod state;
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 #[derive(Clone, Copy, PartialEq, Eq, clap::ValueEnum)]
@@ -64,32 +65,73 @@ struct Runner {
     releases_json: releases::ReleasesJson,
     dry_run: bool,
     sdk_repo: PathBuf,
+    /// PRs that need annotation this run. None means all PRs (bootstrap).
+    dirty_prs: Option<HashSet<u64>>,
 }
 
 impl Runner {
     async fn run(mut self, steps: &[Step]) -> Result<()> {
         for &step in steps {
             self.run_step(step).await?;
+            self.save_state()?;
         }
+        Ok(())
+    }
 
+    fn save_state(&self) -> Result<()> {
         if !self.dry_run {
             log::info!("Saving state to {}", self.state_path.display());
             self.state.save(&self.state_path)?;
         }
-
         Ok(())
+    }
+
+    /// Collect PRs from the given release tags.
+    fn prs_from_tags(&self, tags: &[String]) -> HashSet<u64> {
+        let tag_set: HashSet<&str> = tags.iter().map(|t| t.as_str()).collect();
+        self.state.releases.iter()
+            .filter(|r| tag_set.contains(r.tag.as_str()))
+            .flat_map(|r| r.crates.iter().flat_map(|c| &c.prs))
+            .copied()
+            .collect()
+    }
+
+    /// Collect all PRs from all releases.
+    fn all_prs(&self) -> HashSet<u64> {
+        self.state.releases.iter()
+            .flat_map(|r| r.crates.iter().flat_map(|c| &c.prs))
+            .copied()
+            .collect()
     }
 
     async fn run_step(&mut self, step: Step) -> Result<()> {
         match step {
             Step::Discover => {
-                releases::discover_and_resolve(&mut self.state, &self.releases_json, &self.sdk_repo)
+                let new_tags = releases::discover_and_resolve(
+                    &mut self.state, &self.releases_json, &self.sdk_repo,
+                )?;
+                if !new_tags.is_empty() {
+                    let new_prs = self.prs_from_tags(&new_tags);
+                    log::info!("{} PRs from {} new release tag(s)", new_prs.len(), new_tags.len());
+                    match &mut self.dirty_prs {
+                        Some(set) => set.extend(new_prs),
+                        None => {} // None means all — already covers these
+                    }
+                }
+                Ok(())
             }
             Step::Downstream => {
-                downstream::check_downstream(&mut self.state, &self.gh).await
+                let changed = downstream::check_downstream(&mut self.state, &self.gh).await?;
+                if changed {
+                    // Downstream state changed — all PRs need status recomputation
+                    self.dirty_prs = None;
+                }
+                Ok(())
             }
             Step::Onchain => onchain::check_onchain(&mut self.state.runtimes).await,
-            Step::Annotate => project::annotate(&self.state, &self.gh, self.dry_run).await,
+            Step::Annotate => {
+                project::annotate(&self.state, &self.gh, self.dry_run, self.dirty_prs.as_ref()).await
+            }
         }
     }
 }
@@ -136,6 +178,13 @@ async fn main() -> Result<()> {
         None => Step::ALL,
     };
 
-    let runner = Runner { gh, state, state_path, releases_json, dry_run: cli.dry_run, sdk_repo: cli.sdk_repo };
+    // Bootstrap (blank state) -> annotate all PRs; incremental -> only dirty ones
+    let dirty_prs = if state.last_processed_tag.is_some() {
+        Some(HashSet::new())
+    } else {
+        None
+    };
+
+    let runner = Runner { gh, state, state_path, releases_json, dry_run: cli.dry_run, sdk_repo: cli.sdk_repo, dirty_prs };
     runner.run(steps).await
 }

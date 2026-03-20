@@ -105,7 +105,6 @@
       ]
     }
   ],
-  "last_processed_tags_date": "2026-03-10",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -33126,5 +33125,6 @@
         }
       ]
     }
-  ]
+  ],
+  "last_processed_tag": "polkadot-stable2506-9"
 }

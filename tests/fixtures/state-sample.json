@@ -21,7 +21,7 @@
       "upgrades": []
     }
   ],
-  "last_processed_tags_date": null,
+  "last_processed_tag": null,
   "releases": [
     {
       "tag": "polkadot-stable2506-1",

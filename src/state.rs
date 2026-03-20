@@ -20,8 +20,8 @@ pub struct State {
     pub project: Project,
     /// Tracked downstream runtimes.
     pub runtimes: Vec<Runtime>,
-    /// ISO date of the most recently processed tag.
-    pub last_processed_tags_date: Option<String>,
+    /// Name of the most recently processed tag (e.g. "polkadot-stable2512-2").
+    pub last_processed_tag: Option<String>,
     /// Discovered releases with crate-level PR mappings.
     #[serde(default)]
     pub releases: Vec<Release>,
@@ -142,7 +142,7 @@ mod tests {
         let state = State {
             project: Project { org: "test-org".into(), number: 42 },
             runtimes: vec![],
-            last_processed_tags_date: Some("2025-06-15".into()),
+            last_processed_tag: Some("polkadot-stable2506-1".into()),
             releases: vec![Release {
                 tag: "v1".into(),
                 prev_tag: "v0".into(),

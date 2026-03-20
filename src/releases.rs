@@ -75,26 +75,32 @@ struct PublishedTag {
 }
 
 /// Discover new releases from releases-v1.json and resolve PRs via local git.
+/// Returns the list of newly discovered release tags.
 pub fn discover_and_resolve(
     state: &mut State,
     releases_json: &ReleasesJson,
     sdk_repo: &Path,
-) -> Result<()> {
+) -> Result<Vec<String>> {
     log::info!("Discover releases & resolve PRs");
     let tags = collect_published_tags(releases_json)?;
 
-    let cutoff = state.last_processed_tags_date.as_deref();
-    let new_tags: Vec<_> = tags
-        .iter()
-        .filter(|t| match cutoff {
-            Some(date) => t.date.as_str() > date,
-            None => true,
-        })
-        .collect();
+    // Find tags after the last processed one
+    let cutoff_idx = state.last_processed_tag.as_ref().and_then(|last| {
+        tags.iter().position(|t| t.tag == *last)
+    });
+    let new_tags: Vec<_> = match cutoff_idx {
+        Some(idx) => tags[idx + 1..].iter().collect(),
+        None if state.last_processed_tag.is_none() => tags.iter().collect(),
+        // last_processed_tag set but not found — skip (already fully processed)
+        Some(_) | None => {
+            log::info!("No new tags to process");
+            return Ok(Vec::new());
+        }
+    };
 
     if new_tags.is_empty() {
         log::info!("No new tags to process");
-        return Ok(());
+        return Ok(Vec::new());
     }
 
     log::info!("Found {} new tag(s) to process", new_tags.len());
@@ -104,6 +110,7 @@ pub fn discover_and_resolve(
     log::debug!("Indexed {} prdoc files", prdoc_crates.len());
 
     let known_tags: HashSet<String> = state.releases.iter().map(|r| r.tag.clone()).collect();
+    let mut new_release_tags = Vec::new();
 
     for published in &new_tags {
         if known_tags.contains(&published.tag) {
@@ -127,14 +134,15 @@ pub fn discover_and_resolve(
             release.crates.iter().flat_map(|c| &c.prs).collect::<HashSet<_>>().len()
         );
 
+        new_release_tags.push(release.tag.clone());
         state.releases.push(release);
     }
 
-    if let Some(latest) = new_tags.iter().map(|t| t.date.as_str()).max() {
-        state.last_processed_tags_date = Some(latest.to_string());
+    if let Some(latest) = new_tags.last() {
+        state.last_processed_tag = Some(latest.tag.clone());
     }
 
-    Ok(())
+    Ok(new_release_tags)
 }
 
 /// Collect all published (released) tags from releases-v1.json, sorted by date.

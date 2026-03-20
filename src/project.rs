@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::github::GitHubClient;
 use crate::releases::{SDK_OWNER, SDK_REPO};
@@ -55,7 +55,8 @@ fn format_status_summary(state: &State, pr_crates: &HashMap<u64, HashMap<String,
 }
 
 /// Annotate PRs in the GitHub Project V2.
-pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool) -> Result<()> {
+/// When `dirty_prs` is Some, only those PRs are annotated. When None, all PRs are annotated.
+pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, dirty_prs: Option<&HashSet<u64>>) -> Result<()> {
     log::info!("Annotate GitHub Project");
     let project = fetch_project_info(gh, &state.project.org, state.project.number).await?;
     log::debug!("Project ID: {}", project.project_id);
@@ -66,7 +67,10 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool) -> Result
     for release in &state.releases {
         for crate_rel in &release.crates {
             for &pr in &crate_rel.prs {
-                pr_tags.entry(pr).or_default().push(release.tag.clone());
+                // Only include PRs in the dirty set (or all if no dirty set)
+                if dirty_prs.map_or(true, |d| d.contains(&pr)) {
+                    pr_tags.entry(pr).or_default().push(release.tag.clone());
+                }
             }
         }
     }
@@ -77,7 +81,7 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool) -> Result
         tags.dedup();
     }
 
-    log::info!("{} unique PRs to annotate", pr_tags.len());
+    log::info!("{} PRs to annotate", pr_tags.len());
 
     let pr_crates = build_pr_crate_map(state);
 
@@ -444,7 +448,7 @@ mod tests {
         State {
             project: Project { org: "test".into(), number: 1 },
             runtimes,
-            last_processed_tags_date: None,
+            last_processed_tag: None,
             releases,
         }
     }
