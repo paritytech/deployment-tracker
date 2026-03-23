@@ -4,6 +4,8 @@
 
 Tracker monitors [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) releases, checks whether downstream runtimes have adopted the changes, verifies on-chain deployment, and annotates a GitHub Project with per-PR deployment status.
 
+![PR fields before and after tracking](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-overview.png)
+
 ## How It Works
 
 Tracker runs a four-step pipeline, each step building on the previous:
@@ -22,7 +24,52 @@ Tracker runs a four-step pipeline, each step building on the previous:
 
 Partial adoption is shown as a suffix, e.g. `v1002300 (2/3 crates)`.
 
-Every run prints per-step summary tables showing release discovery, on-chain spec versions, downstream crate adoption, and annotation counts.
+![Status examples across the PR lifecycle](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-status-examples.png)
+
+## Sample Output
+
+Every run prints per-step summary tables:
+
+```
+┌───────────────────┬───────────────────────────┐
+│ Release Discovery ┆                           │
+╞═══════════════════╪═══════════════════════════╡
+│ Latest known      ┆ polkadot-stable2512-2     │
+│ New releases      ┆ none                      │
+└───────────────────┴───────────────────────────┘
+
+┌─────────────────────┬──────────┬──────────┬──────────┐
+│ Onchain Discovery   ┆ Previous ┆ Current  ┆ Pending  │
+╞═════════════════════╪══════════╪══════════╪══════════╡
+│ AH Paseo            ┆ v2000006 ┆ v2000006 ┆ v2001000 │
+│ AH Kusama           ┆ v2001000 ┆ v2001000 ┆ v2001001 │
+│ AH Polkadot         ┆ v2000007 ┆ v2001001 ┆ -        │
+└─────────────────────┴──────────┴──────────┴──────────┘
+
+┌───────────────────┬──────────┬───────────┬───────────────┐
+│ Runtime Discovery ┆ Current  ┆ Code Spec ┆ Crate Updates │
+╞═══════════════════╪══════════╪═══════════╪═══════════════╡
+│ AH Paseo          ┆ v2000006 ┆ v2001000  ┆ 126           │
+│ AH Kusama         ┆ v2001000 ┆ v2001001  ┆ 118           │
+│ AH Polkadot       ┆ v2001001 ┆ v2001001  ┆ -             │
+└───────────────────┴──────────┴───────────┴───────────────┘
+
+┌─────────────────┬──────────┬─────┐
+│ PRs to Annotate ┆ Version  ┆ PRs │
+╞═════════════════╪══════════╪═════╡
+│ AH Paseo        ┆ v2001000 ┆ 420 │
+│ AH Kusama       ┆ v2001001 ┆ 380 │
+│ AH Polkadot     ┆ v2001001 ┆ 512 │
+└─────────────────┴──────────┴─────┘
+```
+
+With `--verbose`, each annotated PR is listed with its per-runtime status:
+
+```
+  #9002 AH Paseo: pending v2001000, AH Kusama: pending v2001001, AH Polkadot: v2001001
+  #9063 AH Paseo: pending v2001000 (1/2 crates), AH Kusama: pending v2001001 (1/2 crates)
+  #9279 AH Paseo: pending v2001000 (3/4 crates), AH Polkadot: v2001001 (3/4 crates)
+```
 
 ## Quick Start
 
