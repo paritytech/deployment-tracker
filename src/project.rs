@@ -5,6 +5,8 @@ use crate::github::GitHubClient;
 use crate::releases::{SDK_OWNER, SDK_REPO};
 use crate::state::State;
 
+const RELEASE_TAGS_FIELD: &str = "Release Tags";
+
 /// Fetched GitHub Project V2 metadata.
 struct ProjectInfo {
     /// Global node ID of the project.
@@ -84,30 +86,27 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, verbose: 
     log::info!("{} PRs to annotate", pr_tags.len());
 
     let pr_crates = build_pr_crate_map(state);
-    let prs: Vec<u64> = pr_tags.keys().copied().collect();
 
-    // Compute per-runtime counts from the same data used for annotation
-    let per_runtime = state.runtimes.iter()
-        .map(|rt| {
-            prs.iter()
-                .filter(|&&pr| !compute_runtime_status(rt, pr_crates.get(&pr)).is_empty())
-                .count()
+    // Compute per-PR per-runtime statuses in a single pass
+    let mut per_runtime = vec![0usize; state.runtimes.len()];
+    let mut details: Vec<PrAnnotation> = pr_tags.keys()
+        .map(|&pr| {
+            let statuses: Vec<String> = state.runtimes.iter().enumerate()
+                .map(|(i, rt)| {
+                    let status = compute_runtime_status(rt, pr_crates.get(&pr));
+                    if !status.is_empty() {
+                        per_runtime[i] += 1;
+                    }
+                    status
+                })
+                .collect();
+            PrAnnotation { number: pr, statuses }
         })
         .collect();
-    let details = if verbose {
-        let mut d: Vec<PrAnnotation> = pr_tags.iter()
-            .map(|(&pr, _tags)| {
-                let statuses = state.runtimes.iter()
-                    .map(|rt| compute_runtime_status(rt, pr_crates.get(&pr)))
-                    .collect();
-                PrAnnotation { number: pr, statuses }
-            })
-            .collect();
-        d.sort_by_key(|a| a.number);
-        d
-    } else {
-        Vec::new()
-    };
+    details.sort_by_key(|a| a.number);
+    if !verbose {
+        details.clear();
+    }
     let stats = AnnotationStats { per_runtime, details };
 
     if dry_run {
@@ -115,11 +114,11 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, verbose: 
     }
 
     // Ensure "Release Tags" field exists
-    let release_tags_field = match project.fields.get("Release Tags") {
+    let release_tags_field = match project.fields.get(RELEASE_TAGS_FIELD) {
         Some(f) => f.clone(),
         None => {
             log::info!("Creating 'Release Tags' field...");
-            create_text_field(gh, &project.project_id, "Release Tags").await?
+            create_text_field(gh, &project.project_id, RELEASE_TAGS_FIELD).await?
         }
     };
 
@@ -137,7 +136,7 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, verbose: 
     }
 
     // Collect all field IDs for batch updates: "Release Tags" + per-runtime fields
-    let mut all_field_ids: Vec<(&str, &str)> = vec![("Release Tags", &release_tags_field)];
+    let mut all_field_ids: Vec<(&str, &str)> = vec![(RELEASE_TAGS_FIELD, &release_tags_field)];
     for runtime in &state.runtimes {
         if let Some(fid) = runtime_field_ids.get(&runtime.field_name) {
             all_field_ids.push((&runtime.field_name, fid));

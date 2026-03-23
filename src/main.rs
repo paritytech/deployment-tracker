@@ -67,20 +67,17 @@ struct Cli {
 }
 
 struct DownstreamSummary {
-    name: String,
-    current_spec: String,
+    current_spec: Option<u64>,
     crate_updates: usize,
 }
 
 struct OnchainSummary {
-    name: String,
     previous: Option<u64>,
     current: u64,
 }
 
 struct AnnotateSummary {
-    name: String,
-    version: String,
+    version: Option<u64>,
     prs: usize,
 }
 
@@ -154,10 +151,9 @@ impl Runner {
                     t.set_header(["Runtime Discovery", "Current", "Code Spec", "Crate Updates"]);
                     for (ds, rt) in runtimes.iter().zip(&self.state.runtimes) {
                         let code_spec = fmt_opt_spec(rt.downstream.spec_version);
-                        let is_new = rt.downstream.spec_version
-                            .map_or(false, |cs| ds.current_spec != format!("v{cs}"));
+                        let is_new = rt.downstream.spec_version != ds.current_spec;
                         let updates = if is_new { ds.crate_updates.to_string() } else { "-".into() };
-                        t.add_row([&ds.name, &ds.current_spec, &code_spec, &updates]);
+                        t.add_row([&rt.field_name, &fmt_opt_spec(ds.current_spec), &code_spec, &updates]);
                     }
                     println!("\n{t}");
                 }
@@ -169,22 +165,19 @@ impl Runner {
                             Some(code) if code > oc.current => fmt_spec(code),
                             _ => "-".into(),
                         };
-                        t.add_row([&oc.name, &fmt_opt_spec(oc.previous), &fmt_spec(oc.current), &pending]);
+                        t.add_row([&rt.field_name, &fmt_opt_spec(oc.previous), &fmt_spec(oc.current), &pending]);
                     }
                     println!("\n{t}");
                 }
                 StepSummary::Annotate { runtimes, details } => {
                     let mut t = make_table();
                     t.set_header(["PRs to Annotate", "Version", "PRs"]);
-                    for an in runtimes {
-                        t.add_row([&an.name, &an.version, &an.prs.to_string()]);
+                    for (an, rt) in runtimes.iter().zip(&self.state.runtimes) {
+                        t.add_row([rt.field_name.as_str(), &fmt_opt_spec(an.version), &an.prs.to_string()]);
                     }
                     println!("\n{t}");
 
                     if !details.is_empty() {
-                        let rt_names: Vec<String> = self.state.runtimes.iter()
-                            .map(|rt| format!("{} {}", rt.short, rt.network))
-                            .collect();
                         println!();
                         for pr in details {
                             let url = format!(
@@ -193,9 +186,9 @@ impl Runner {
                             );
                             let label = format!("#{}", pr.number);
                             let mut parts = Vec::new();
-                            for (name, status) in rt_names.iter().zip(&pr.statuses) {
+                            for (rt, status) in self.state.runtimes.iter().zip(&pr.statuses) {
                                 if !status.is_empty() {
-                                    parts.push(format!("{name}: {status}"));
+                                    parts.push(format!("{}: {status}", rt.field_name));
                                 }
                             }
                             if parts.is_empty() {
@@ -286,22 +279,17 @@ impl Runner {
                 }
                 let runtimes = self.state.runtimes.iter()
                     .map(|rt| {
-                        let name = format!("{} {}", rt.short, rt.network);
-                        let current_spec = rt.upgrades.iter()
-                            .map(|u| u.spec_version).max()
-                            .map_or("-".into(), |v| format!("v{v}"));
                         let count = crate_updates.iter()
                             .filter(|u| rt.downstream.deps.contains(&u.name))
                             .count();
-                        DownstreamSummary { name, current_spec, crate_updates: count }
+                        DownstreamSummary { current_spec: rt.max_onchain_spec(), crate_updates: count }
                     })
                     .collect();
                 Ok(StepSummary::Downstream { runtimes })
             }
             Step::Onchain => {
-                // Capture previous max spec per runtime before the check
                 let prev_specs: Vec<Option<u64>> = self.state.runtimes.iter()
-                    .map(|rt| rt.upgrades.iter().map(|u| u.spec_version).max())
+                    .map(|rt| rt.max_onchain_spec())
                     .collect();
                 let upgraded = onchain::check_onchain(&mut self.state.runtimes).await?;
                 if !upgraded.is_empty() {
@@ -310,11 +298,9 @@ impl Runner {
                     self.add_dirty(prs);
                 }
                 let runtimes = self.state.runtimes.iter().enumerate()
-                    .map(|(i, rt)| {
-                        let name = format!("{} {}", rt.short, rt.network);
-                        let current = rt.upgrades.iter()
-                            .map(|u| u.spec_version).max().unwrap_or(0);
-                        OnchainSummary { name, previous: prev_specs[i], current }
+                    .map(|(i, rt)| OnchainSummary {
+                        previous: prev_specs[i],
+                        current: rt.max_onchain_spec().unwrap_or(0),
                     })
                     .collect();
                 Ok(StepSummary::Onchain { runtimes })
@@ -325,9 +311,7 @@ impl Runner {
                 ).await?;
                 let runtimes = self.state.runtimes.iter().enumerate()
                     .map(|(i, rt)| AnnotateSummary {
-                        name: format!("{} {}", rt.short, rt.network),
-                        version: rt.downstream.spec_version
-                            .map_or("-".into(), |v| format!("v{v}")),
+                        version: rt.downstream.spec_version,
                         prs: stats.per_runtime[i],
                     })
                     .collect();

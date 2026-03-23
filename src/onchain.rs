@@ -119,12 +119,7 @@ pub async fn check_onchain(runtimes: &mut [Runtime]) -> Result<Vec<usize>> {
         let current_spec = chain.get_spec_version(head_hash).await?;
         log::info!("Head: block {head}, spec {current_spec}");
 
-        let last_known_spec = runtime
-            .upgrades
-            .iter()
-            .map(|u| u.spec_version)
-            .max()
-            .unwrap_or(0);
+        let last_known_spec = runtime.max_onchain_spec().unwrap_or(0);
 
         if current_spec as u64 <= last_known_spec {
             log::debug!("No new upgrades (last known: {last_known_spec})");

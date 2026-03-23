@@ -73,6 +73,13 @@ pub struct Runtime {
     pub downstream: DownstreamInfo,
 }
 
+impl Runtime {
+    /// Highest on-chain spec version seen so far, if any.
+    pub fn max_onchain_spec(&self) -> Option<u64> {
+        self.upgrades.iter().map(|u| u.spec_version).max()
+    }
+}
+
 /// An on-chain runtime upgrade event.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Upgrade {
