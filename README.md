@@ -8,9 +8,9 @@ Tracker monitors [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) rele
 
 Tracker runs a four-step pipeline, each step building on the previous:
 
-1. **Discover** -- reads [`releases-v1.json`](../releases-v1.json) to find new release tags, extracts crate version bumps and maps them to PRs via commit messages and [prdoc](https://github.com/nickvdp/prdoc) files
-2. **Downstream** -- fetches `Cargo.lock` / `Cargo.toml` from downstream runtime repos (e.g. [paseo-network/runtimes](https://github.com/paseo-network/runtimes)) to check which crate versions have been adopted
-3. **Onchain** -- connects to live chains via WebSocket RPC, binary-searches for runtime upgrade blocks, and records spec version, block number, and timestamp
+1. **Discover** -- reads [`releases-v1.json`](https://github.com/paritytech/release-registry/blob/main/releases-v1.json) to find new release tags, extracts crate version bumps and maps them to PRs via commit messages and prdoc files
+2. **Onchain** -- connects to live chains via WebSocket RPC, binary-searches for runtime upgrade blocks, and records spec version, block number, and timestamp
+3. **Downstream** -- fetches `Cargo.lock` / `Cargo.toml` from downstream runtime repos (e.g. [paseo-network/runtimes](https://github.com/paseo-network/runtimes)) to check which crate versions have been adopted
 4. **Annotate** -- updates a GitHub Project V2, tagging each PR with its release and a per-runtime deployment status:
 
 | Status | Meaning |
@@ -22,6 +22,8 @@ Tracker runs a four-step pipeline, each step building on the previous:
 
 Partial adoption is shown as a suffix, e.g. `v1002300 (2/3 crates)`.
 
+Every run prints per-step summary tables showing release discovery, on-chain spec versions, downstream crate adoption, and annotation counts.
+
 ## Quick Start
 
 <details>
@@ -29,33 +31,45 @@ Partial adoption is shown as a suffix, e.g. `v1002300 (2/3 crates)`.
 
 - Rust 1.70+
 - A `GITHUB_TOKEN` with access to the target repos and project
+- A local [polkadot-sdk](https://github.com/paritytech/polkadot-sdk) git checkout
 
 </details>
 
 ```bash
-cargo build --release -p tracker
+cargo build --release
 ```
 
 ## Usage
 
 ```bash
 # Run the full pipeline
-GITHUB_TOKEN=xxx ./target/release/tracker
+GITHUB_TOKEN=xxx ./target/release/tracker --sdk-repo /path/to/polkadot-sdk
 
 # Preview without modifying state or GitHub
-GITHUB_TOKEN=xxx ./target/release/tracker --dry-run
+GITHUB_TOKEN=xxx ./target/release/tracker --sdk-repo /path/to/polkadot-sdk --dry-run
+
+# Show per-PR annotation details
+GITHUB_TOKEN=xxx ./target/release/tracker --sdk-repo /path/to/polkadot-sdk --verbose
 
 # Run a single step
-GITHUB_TOKEN=xxx ./target/release/tracker --step discover
+GITHUB_TOKEN=xxx ./target/release/tracker --sdk-repo /path/to/polkadot-sdk --step discover
+
+# Filter to a single runtime
+GITHUB_TOKEN=xxx ./target/release/tracker --sdk-repo /path/to/polkadot-sdk --runtime paseo
 ```
+
+You can set `POLKADOT_SDK_DIR` instead of passing `--sdk-repo` each time.
 
 ## Options
 
 | Flag | Default | Description |
 |------|---------|-------------|
+| `--sdk-repo <PATH>` | `$POLKADOT_SDK_DIR` | Path to a local polkadot-sdk git checkout (required) |
 | `--dry-run` | `false` | Run without writing state or updating GitHub |
-| `--step <STEP>` | all | Run only one step: `discover`, `downstream`, `onchain`, `annotate` |
-| `--state-path <PATH>` | `../state.json` | Path to the persistent state file |
+| `--verbose` | `false` | Print per-PR annotation details with clickable links |
+| `--runtime <FILTER>` | all | Filter to runtimes matching this name (e.g. "paseo", "AH Kusama") |
+| `--step <STEP>` | all | Run only one step: `discover`, `onchain`, `downstream`, `annotate` |
+| `--state-path <PATH>` | `./state.json` | Path to the persistent state file |
 
 ## Configuration
 
@@ -66,27 +80,21 @@ All configuration lives in [`state.json`](./state.json). It defines which GitHub
   "project": { "org": "paritytech", "number": 274 },
   "runtimes": [
     {
-      "runtime": "asset-hub-paseo",
-      "short": "AH Paseo",
+      "runtime": "Asset Hub",
+      "short": "AH",
       "repo": "paseo-network/runtimes",
       "branch": "main",
-      "rpc": "wss://asset-hub-paseo-rpc.dwellir.com",
-      "in_repo": false
+      "network": "Paseo",
+      "ws": "wss://sys.ibp.network/asset-hub-paseo",
+      "field_name": "AH Paseo"
       // ...
     }
   ]
 }
 ```
 
-Runtimes with `"in_repo": true` (e.g. Asset Hub Westend, which lives in polkadot-sdk itself) skip version matching and assume all PRs are adopted once merged.
-
 ## Testing
 
 ```bash
-# Unit tests
-cargo test --lib -p tracker
-
-# Integration tests (require GITHUB_TOKEN)
-GITHUB_TOKEN=xxx cargo test -p tracker
+cargo test
 ```
-
