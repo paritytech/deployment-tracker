@@ -61,7 +61,7 @@ See [RELEASE.md](https://github.com/paritytech/polkadot-sdk/blob/master/docs/REL
 
 ## Pipeline
 
-The tracker runs a four-step pipeline. State is saved after each step so progress is not lost on failure.
+The tracker runs a four-step pipeline in order: Discover, Onchain, Downstream, Annotate. State is saved after each step so progress is not lost on failure.
 
 ### Step 1: Discover new releases
 
@@ -167,7 +167,7 @@ graph LR
 
 > **Note:** A PR can appear in releases from different stable branches (e.g. merged to master, then backported to stable2509 and stable2512). This is expected and correct. A PR can also appear under multiple crates within the same release if it modifies several crates.
 
-### Step 2: Detect downstream crate consumption
+### Step 3: Detect downstream crate consumption
 
 For each watched downstream repo, on each run:
 
@@ -218,7 +218,7 @@ graph TB
     style R fill:#e67e22,color:#fff
 ```
 
-### Step 3: Confirm on-chain deployment
+### Step 2: Confirm on-chain deployment
 
 Connect to each tracked network via WebSocket RPC. Query `state_getRuntimeVersion` to get the current on-chain `specVersion`.
 

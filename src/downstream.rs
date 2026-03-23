@@ -39,20 +39,15 @@ pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<Ha
             &latest_commit[..8]
         );
 
-        let cargo_lock = gh
-            .get_raw_content(owner, repo, &runtime.cargo_lock_path, &latest_commit)
-            .await?;
-        let current_versions = parse_cargo_lock_versions(&cargo_lock);
+        let (cargo_lock_res, cargo_toml_res, spec_version_res) = tokio::join!(
+            gh.get_raw_content(owner, repo, &runtime.cargo_lock_path, &latest_commit),
+            gh.get_raw_content(owner, repo, &runtime.cargo_toml_path, &latest_commit),
+            gh.get_raw_content(owner, repo, &runtime.spec_version_path, &latest_commit),
+        );
 
-        let cargo_toml = gh
-            .get_raw_content(owner, repo, &runtime.cargo_toml_path, &latest_commit)
-            .await?;
-        let runtime_deps = parse_runtime_deps(&cargo_toml);
-
-        let spec_version = match gh
-            .get_raw_content(owner, repo, &runtime.spec_version_path, &latest_commit)
-            .await
-        {
+        let current_versions = parse_cargo_lock_versions(&cargo_lock_res?);
+        let runtime_deps = parse_runtime_deps(&cargo_toml_res?);
+        let spec_version = match spec_version_res {
             Ok(content) => parse_spec_version(&content),
             Err(e) => {
                 log::warn!("Could not fetch spec_version_path: {e}");
@@ -73,11 +68,20 @@ pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<Ha
             .collect();
 
         // Diff old vs new versions to find crate updates
+        let mut runtime_updates = 0usize;
         for (name, version) in &new_versions {
             let changed = runtime.downstream.versions.get(name) != Some(version);
             if changed {
                 updates.insert(CrateUpdate { name: name.clone(), version: version.clone() });
+                runtime_updates += 1;
             }
+        }
+
+        if runtime_updates > 0 {
+            log::info!(
+                "{} ({}): {} crate version change(s)",
+                runtime.runtime, runtime.network, runtime_updates
+            );
         }
 
         runtime.downstream = crate::state::DownstreamInfo {
@@ -87,10 +91,6 @@ pub async fn check_downstream(state: &mut State, gh: &GitHubClient) -> Result<Ha
         };
 
         runtime.last_seen_commit = Some(latest_commit);
-    }
-
-    if !updates.is_empty() {
-        log::info!("{} crate version changes detected downstream", updates.len());
     }
 
     Ok(updates)

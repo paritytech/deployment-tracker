@@ -19,7 +19,7 @@ struct ProjectInfo {
 /// earliest because polkadot-sdk publishes crate versions from independent
 /// release branches, and a higher version number does not guarantee it contains
 /// all changes from a lower one.
-fn build_pr_crate_map(state: &State) -> HashMap<u64, HashMap<String, Vec<String>>> {
+pub fn build_pr_crate_map(state: &State) -> HashMap<u64, HashMap<String, Vec<String>>> {
     let mut map: HashMap<u64, HashMap<String, Vec<String>>> = HashMap::new();
     for release in &state.releases {
         for crate_rel in &release.crates {
@@ -37,26 +37,26 @@ fn build_pr_crate_map(state: &State) -> HashMap<u64, HashMap<String, Vec<String>
     map
 }
 
-/// Format runtime status annotations for a PR as `" [AH Paseo=v2000006]"` or empty.
-fn format_status_summary(state: &State, pr_crates: &HashMap<u64, HashMap<String, Vec<String>>>, pr: u64) -> String {
-    let mut parts = Vec::new();
-    let crates = pr_crates.get(&pr);
-    for runtime in &state.runtimes {
-        let status = compute_runtime_status(runtime, crates);
-        if !status.is_empty() {
-            parts.push(format!("{}={}", runtime.field_name, status));
-        }
-    }
-    if parts.is_empty() {
-        String::new()
-    } else {
-        format!(" [{}]", parts.join(", "))
-    }
+/// Per-PR annotation detail.
+pub struct PrAnnotation {
+    /// PR number.
+    pub number: u64,
+    /// Per-runtime status (indexed by runtime, empty string if not relevant).
+    pub statuses: Vec<String>,
+}
+
+/// Annotation results returned by `annotate`.
+pub struct AnnotationStats {
+    /// Number of PRs with non-empty status, per runtime index.
+    pub per_runtime: Vec<usize>,
+    /// Per-PR details (only populated when verbose=true).
+    pub details: Vec<PrAnnotation>,
 }
 
 /// Annotate PRs in the GitHub Project V2.
 /// When `dirty_prs` is Some, only those PRs are annotated. When None, all PRs are annotated.
-pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, dirty_prs: Option<&HashSet<u64>>) -> Result<()> {
+/// Returns per-runtime counts of PRs with non-empty status, and per-PR details when `verbose`.
+pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, verbose: bool, dirty_prs: Option<&HashSet<u64>>) -> Result<AnnotationStats> {
     log::info!("Annotate GitHub Project");
     let project = fetch_project_info(gh, &state.project.org, state.project.number).await?;
     log::debug!("Project ID: {}", project.project_id);
@@ -84,13 +84,34 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, dirty_prs
     log::info!("{} PRs to annotate", pr_tags.len());
 
     let pr_crates = build_pr_crate_map(state);
+    let prs: Vec<u64> = pr_tags.keys().copied().collect();
+
+    // Compute per-runtime counts from the same data used for annotation
+    let per_runtime = state.runtimes.iter()
+        .map(|rt| {
+            prs.iter()
+                .filter(|&&pr| !compute_runtime_status(rt, pr_crates.get(&pr)).is_empty())
+                .count()
+        })
+        .collect();
+    let details = if verbose {
+        let mut d: Vec<PrAnnotation> = pr_tags.iter()
+            .map(|(&pr, _tags)| {
+                let statuses = state.runtimes.iter()
+                    .map(|rt| compute_runtime_status(rt, pr_crates.get(&pr)))
+                    .collect();
+                PrAnnotation { number: pr, statuses }
+            })
+            .collect();
+        d.sort_by_key(|a| a.number);
+        d
+    } else {
+        Vec::new()
+    };
+    let stats = AnnotationStats { per_runtime, details };
 
     if dry_run {
-        for (pr, tags) in &pr_tags {
-            let status_str = format_status_summary(state, &pr_crates, *pr);
-            log::info!("PR #{pr}: {}{status_str}", tags.join(", "));
-        }
-        return Ok(());
+        return Ok(stats);
     }
 
     // Ensure "Release Tags" field exists
@@ -179,7 +200,7 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, dirty_prs
         batch_set_field_values(gh, &project.project_id, &field_updates).await?;
     }
 
-    Ok(())
+    Ok(stats)
 }
 
 /// Compute the per-runtime status for a PR following the state machine:
@@ -188,7 +209,7 @@ pub async fn annotate(state: &State, gh: &GitHubClient, dry_run: bool, dirty_prs
 ///   pending v{new_spec}            - picked up, spec bumped, not enacted on-chain
 ///   v{spec}                        - enacted on-chain
 /// Partial adoption appends ` (N/M crates)`.
-fn compute_runtime_status(
+pub fn compute_runtime_status(
     runtime: &crate::state::Runtime,
     pr_release_crates: Option<&HashMap<String, Vec<String>>>,
 ) -> String {

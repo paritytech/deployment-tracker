@@ -34,7 +34,7 @@ enum Step {
 }
 
 impl Step {
-    const ALL: &[Step] = &[Step::Discover, Step::Downstream, Step::Onchain, Step::Annotate];
+    const ALL: &[Step] = &[Step::Discover, Step::Onchain, Step::Downstream, Step::Annotate];
 }
 
 /// CLI arguments.
@@ -45,9 +45,17 @@ struct Cli {
     #[clap(long)]
     dry_run: bool,
 
+    /// Print detailed per-PR annotations
+    #[clap(long)]
+    verbose: bool,
+
     /// Run only a specific step
     #[clap(long)]
     step: Option<Step>,
+
+    /// Filter to a single runtime by field name (e.g. "AH Paseo")
+    #[clap(long)]
+    runtime: Option<String>,
 
     /// Path to state.json (default: ./state.json)
     #[clap(long)]
@@ -58,12 +66,41 @@ struct Cli {
     sdk_repo: PathBuf,
 }
 
+struct DownstreamSummary {
+    name: String,
+    current_spec: String,
+    crate_updates: usize,
+}
+
+struct OnchainSummary {
+    name: String,
+    previous: Option<u64>,
+    current: u64,
+}
+
+struct AnnotateSummary {
+    name: String,
+    version: String,
+    prs: usize,
+}
+
+enum StepSummary {
+    Discover { new_tags: Vec<String> },
+    Downstream { runtimes: Vec<DownstreamSummary> },
+    Onchain { runtimes: Vec<OnchainSummary> },
+    Annotate {
+        runtimes: Vec<AnnotateSummary>,
+        details: Vec<project::PrAnnotation>,
+    },
+}
+
 struct Runner {
     gh: github::GitHubClient,
     state: state::State,
     state_path: PathBuf,
     releases_json: releases::ReleasesJson,
     dry_run: bool,
+    verbose: bool,
     sdk_repo: PathBuf,
     /// PRs that need annotation this run. None means all PRs (bootstrap).
     dirty_prs: Option<HashSet<u64>>,
@@ -71,11 +108,108 @@ struct Runner {
 
 impl Runner {
     async fn run(mut self, steps: &[Step]) -> Result<()> {
+        let mut summaries = Vec::new();
         for &step in steps {
-            self.run_step(step).await?;
+            summaries.push(self.run_step(step).await?);
             self.save_state()?;
         }
+        self.print_summary(&summaries);
         Ok(())
+    }
+
+    fn print_summary(&self, summaries: &[StepSummary]) {
+        use comfy_table::{Table, presets::UTF8_FULL_CONDENSED};
+
+        let make_table = || {
+            let mut t = Table::new();
+            t.load_preset(UTF8_FULL_CONDENSED);
+            t
+        };
+
+        let fmt_spec = |v: u64| format!("v{v}");
+        let fmt_opt_spec = |v: Option<u64>| v.map_or("-".into(), |v| fmt_spec(v));
+        let hyperlink = |url: &str, label: &str| {
+            format!("\x1b]8;;{url}\x1b\\{label}\x1b]8;;\x1b\\")
+        };
+
+        for s in summaries {
+            match s {
+                StepSummary::Discover { new_tags } => {
+                    let mut t = make_table();
+                    t.set_header(["Release Discovery", ""]);
+                    let latest = self.state.last_processed_tag.as_deref().unwrap_or("-");
+                    t.add_row(["Latest known", latest]);
+                    if new_tags.is_empty() {
+                        t.add_row(["New releases", "none"]);
+                    } else {
+                        for (i, tag) in new_tags.iter().enumerate() {
+                            let label = if i == 0 { "New releases" } else { "" };
+                            t.add_row([label, tag.as_str()]);
+                        }
+                    }
+                    println!("\n{t}");
+                }
+                StepSummary::Downstream { runtimes } => {
+                    let mut t = make_table();
+                    t.set_header(["Runtime Discovery", "Current", "Code Spec", "Crate Updates"]);
+                    for (ds, rt) in runtimes.iter().zip(&self.state.runtimes) {
+                        let code_spec = fmt_opt_spec(rt.downstream.spec_version);
+                        let is_new = rt.downstream.spec_version
+                            .map_or(false, |cs| ds.current_spec != format!("v{cs}"));
+                        let updates = if is_new { ds.crate_updates.to_string() } else { "-".into() };
+                        t.add_row([&ds.name, &ds.current_spec, &code_spec, &updates]);
+                    }
+                    println!("\n{t}");
+                }
+                StepSummary::Onchain { runtimes } => {
+                    let mut t = make_table();
+                    t.set_header(["Onchain Discovery", "Previous", "Current", "Pending"]);
+                    for (oc, rt) in runtimes.iter().zip(&self.state.runtimes) {
+                        let pending = match rt.downstream.spec_version {
+                            Some(code) if code > oc.current => fmt_spec(code),
+                            _ => "-".into(),
+                        };
+                        t.add_row([&oc.name, &fmt_opt_spec(oc.previous), &fmt_spec(oc.current), &pending]);
+                    }
+                    println!("\n{t}");
+                }
+                StepSummary::Annotate { runtimes, details } => {
+                    let mut t = make_table();
+                    t.set_header(["PRs to Annotate", "Version", "PRs"]);
+                    for an in runtimes {
+                        t.add_row([&an.name, &an.version, &an.prs.to_string()]);
+                    }
+                    println!("\n{t}");
+
+                    if !details.is_empty() {
+                        let rt_names: Vec<String> = self.state.runtimes.iter()
+                            .map(|rt| format!("{} {}", rt.short, rt.network))
+                            .collect();
+                        println!();
+                        for pr in details {
+                            let url = format!(
+                                "https://github.com/paritytech/polkadot-sdk/pull/{}",
+                                pr.number,
+                            );
+                            let label = format!("#{}", pr.number);
+                            let mut parts = Vec::new();
+                            for (name, status) in rt_names.iter().zip(&pr.statuses) {
+                                if !status.is_empty() {
+                                    parts.push(format!("{name}: {status}"));
+                                }
+                            }
+                            if parts.is_empty() {
+                                println!("  {}", hyperlink(&url, &label));
+                            } else {
+                                println!("  {} {}", hyperlink(&url, &label), parts.join(", "));
+                            }
+                        }
+                    } else if !self.verbose {
+                        println!("\nRun with --verbose to display all annotation details.");
+                    }
+                }
+            }
+        }
     }
 
     fn save_state(&self) -> Result<()> {
@@ -130,7 +264,7 @@ impl Runner {
         }
     }
 
-    async fn run_step(&mut self, step: Step) -> Result<()> {
+    async fn run_step(&mut self, step: Step) -> Result<StepSummary> {
         match step {
             Step::Discover => {
                 let new_tags = releases::discover_and_resolve(
@@ -141,28 +275,63 @@ impl Runner {
                     log::info!("{} dirty PRs from {} new release tag(s)", new_prs.len(), new_tags.len());
                     self.add_dirty(new_prs);
                 }
-                Ok(())
+                Ok(StepSummary::Discover { new_tags })
             }
             Step::Downstream => {
-                let updates = downstream::check_downstream(&mut self.state, &self.gh).await?;
-                if !updates.is_empty() {
-                    let prs = self.prs_from_crate_updates(&updates);
-                    log::info!("{} dirty PRs from {} crate update(s)", prs.len(), updates.len());
+                let crate_updates = downstream::check_downstream(&mut self.state, &self.gh).await?;
+                if !crate_updates.is_empty() {
+                    let prs = self.prs_from_crate_updates(&crate_updates);
+                    log::info!("{} dirty PRs from {} crate update(s)", prs.len(), crate_updates.len());
                     self.add_dirty(prs);
                 }
-                Ok(())
+                let runtimes = self.state.runtimes.iter()
+                    .map(|rt| {
+                        let name = format!("{} {}", rt.short, rt.network);
+                        let current_spec = rt.upgrades.iter()
+                            .map(|u| u.spec_version).max()
+                            .map_or("-".into(), |v| format!("v{v}"));
+                        let count = crate_updates.iter()
+                            .filter(|u| rt.downstream.deps.contains(&u.name))
+                            .count();
+                        DownstreamSummary { name, current_spec, crate_updates: count }
+                    })
+                    .collect();
+                Ok(StepSummary::Downstream { runtimes })
             }
             Step::Onchain => {
+                // Capture previous max spec per runtime before the check
+                let prev_specs: Vec<Option<u64>> = self.state.runtimes.iter()
+                    .map(|rt| rt.upgrades.iter().map(|u| u.spec_version).max())
+                    .collect();
                 let upgraded = onchain::check_onchain(&mut self.state.runtimes).await?;
                 if !upgraded.is_empty() {
                     let prs = self.prs_from_runtimes(&upgraded);
                     log::info!("{} dirty PRs from {} runtime upgrade(s)", prs.len(), upgraded.len());
                     self.add_dirty(prs);
                 }
-                Ok(())
+                let runtimes = self.state.runtimes.iter().enumerate()
+                    .map(|(i, rt)| {
+                        let name = format!("{} {}", rt.short, rt.network);
+                        let current = rt.upgrades.iter()
+                            .map(|u| u.spec_version).max().unwrap_or(0);
+                        OnchainSummary { name, previous: prev_specs[i], current }
+                    })
+                    .collect();
+                Ok(StepSummary::Onchain { runtimes })
             }
             Step::Annotate => {
-                project::annotate(&self.state, &self.gh, self.dry_run, self.dirty_prs.as_ref()).await
+                let stats = project::annotate(
+                    &self.state, &self.gh, self.dry_run, self.verbose, self.dirty_prs.as_ref(),
+                ).await?;
+                let runtimes = self.state.runtimes.iter().enumerate()
+                    .map(|(i, rt)| AnnotateSummary {
+                        name: format!("{} {}", rt.short, rt.network),
+                        version: rt.downstream.spec_version
+                            .map_or("-".into(), |v| format!("v{v}")),
+                        prs: stats.per_runtime[i],
+                    })
+                    .collect();
+                Ok(StepSummary::Annotate { runtimes, details: stats.details })
             }
         }
     }
@@ -200,7 +369,19 @@ async fn main() -> Result<()> {
     let gh = github::GitHubClient::new(token);
 
     log::info!("Loading state from {}", state_path.display());
-    let state = state::State::load(&state_path)?;
+    let mut state = state::State::load(&state_path)?;
+
+    if let Some(ref filter) = cli.runtime {
+        let filter_lower = filter.to_lowercase();
+        let before = state.runtimes.len();
+        state.runtimes.retain(|rt| rt.field_name.to_lowercase().contains(&filter_lower));
+        anyhow::ensure!(
+            !state.runtimes.is_empty(),
+            "no runtime matching '{}' (had {} runtimes)", filter, before,
+        );
+        log::info!("Filtered to {} runtime(s) matching '{}'", state.runtimes.len(), filter);
+    }
+
     let releases_json = fetch_releases_json().await?;
 
     let single;
@@ -217,6 +398,6 @@ async fn main() -> Result<()> {
         None
     };
 
-    let runner = Runner { gh, state, state_path, releases_json, dry_run: cli.dry_run, sdk_repo: cli.sdk_repo, dirty_prs };
+    let runner = Runner { gh, state, state_path, releases_json, dry_run: cli.dry_run, verbose: cli.verbose, sdk_repo: cli.sdk_repo, dirty_prs };
     runner.run(steps).await
 }
