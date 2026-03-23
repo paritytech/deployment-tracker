@@ -2,7 +2,7 @@
 
 *Tracks when polkadot-sdk PRs reach downstream runtimes and go live on-chain.*
 
-Tracker monitors [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) releases, checks whether downstream runtimes have adopted the changes, verifies on-chain deployment, and annotates a GitHub Project with per-PR deployment status.
+Tracker monitors [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) releases, checks whether downstream runtimes have adopted the changes, verifies on-chain deployment, and annotates a [GitHub Project](https://github.com/orgs/paritytech/projects/274) with per-PR deployment status.
 
 ![PR fields before and after tracking](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-overview.png)
 
