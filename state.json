@@ -84,7 +84,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2506-9",
+  "last_processed_tag": "polkadot-stable2512-3",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -33102,6 +33102,123 @@
           "prs": [
             11078
           ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2512-3",
+      "prev_tag": "polkadot-stable2512-2",
+      "crates": [
+        {
+          "name": "pallet-society",
+          "version": "45.1.0",
+          "published": "2026-03-23",
+          "prs": [
+            11154
+          ]
+        },
+        {
+          "name": "pallet-staking",
+          "version": "45.1.0",
+          "published": "2026-03-23",
+          "prs": []
+        },
+        {
+          "name": "sc-network-types",
+          "version": "0.20.2",
+          "published": "2026-03-23",
+          "prs": [
+            11204
+          ]
+        },
+        {
+          "name": "pallet-fast-unstake",
+          "version": "44.1.0",
+          "published": "2026-03-23",
+          "prs": []
+        },
+        {
+          "name": "sc-network",
+          "version": "0.55.2",
+          "published": "2026-03-23",
+          "prs": [
+            11078,
+            11204
+          ]
+        },
+        {
+          "name": "pallet-session",
+          "version": "45.2.0",
+          "published": "2026-03-23",
+          "prs": [
+            11197
+          ]
+        },
+        {
+          "name": "pallet-staking-async",
+          "version": "0.10.4",
+          "published": "2026-03-23",
+          "prs": [
+            11168,
+            11222
+          ]
+        },
+        {
+          "name": "pallet-nomination-pools",
+          "version": "43.1.0",
+          "published": "2026-03-23",
+          "prs": [
+            11018
+          ]
+        },
+        {
+          "name": "cumulus-client-consensus-aura",
+          "version": "0.28.1",
+          "published": "2026-03-23",
+          "prs": [
+            11330
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.42.3",
+          "published": "2026-03-23",
+          "prs": [
+            11018,
+            11168,
+            11222,
+            11255
+          ]
+        },
+        {
+          "name": "pallet-staking-async-rc-client",
+          "version": "0.7.3",
+          "published": "2026-03-23",
+          "prs": [
+            11168,
+            11222,
+            11255
+          ]
+        },
+        {
+          "name": "sp-staking",
+          "version": "42.2.0",
+          "published": "2026-03-23",
+          "prs": []
+        },
+        {
+          "name": "pallet-election-provider-multi-block",
+          "version": "0.6.1",
+          "published": "2026-03-23",
+          "prs": [
+            11156
+          ]
+        },
+        {
+          "name": "pallet-nomination-pools-benchmarking",
+          "version": "43.0.1",
+          "published": "2026-03-23",
+          "prs": []
         }
       ]
     }
