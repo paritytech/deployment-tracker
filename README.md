@@ -4,7 +4,7 @@
 
 Tracker monitors [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) releases, checks whether downstream runtimes have adopted the changes, verifies on-chain deployment, and annotates a [GitHub Project](https://github.com/orgs/paritytech/projects/274) with per-PR deployment status.
 
-![PR fields before and after tracking](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-overview.png)
+![PR fields before and after tracking](assets/project-overview.png)
 
 ## How It Works
 

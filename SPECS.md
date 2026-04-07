@@ -2,7 +2,7 @@ Track when polkadot-sdk PRs get deployed to specific networks.
 
 Each PR in the GitHub Project gets annotated with the release tag and deployment spec version per network:
 
-![PR fields before and after tracking](https://raw.githubusercontent.com/pgherveou/design-doc/gas-sponsoring/release-process/project-overview.png)
+![PR fields before and after tracking](assets/project-overview.png)
 
 ## Overview
 
