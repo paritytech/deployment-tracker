@@ -91,7 +91,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2603",
+  "last_processed_tag": "polkadot-stable2506-10",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37013,6 +37013,61 @@
             10582,
             10804,
             10816
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2506-10",
+      "prev_tag": "polkadot-stable2506-9",
+      "crates": [
+        {
+          "name": "pallet-revive-fixtures",
+          "version": "0.4.1",
+          "published": "2026-04-10",
+          "prs": [
+            10749
+          ]
+        },
+        {
+          "name": "pallet-conviction-voting",
+          "version": "41.0.1",
+          "published": "2026-04-10",
+          "prs": [
+            11567
+          ]
+        },
+        {
+          "name": "pallet-revive",
+          "version": "0.7.2",
+          "published": "2026-04-10",
+          "prs": [
+            10749
+          ]
+        },
+        {
+          "name": "cumulus-client-consensus-aura",
+          "version": "0.24.1",
+          "published": "2026-04-10",
+          "prs": [
+            11330,
+            11621
+          ]
+        },
+        {
+          "name": "frame-support",
+          "version": "41.0.2",
+          "published": "2026-04-10",
+          "prs": [
+            11567
+          ]
+        },
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "24.0.2",
+          "published": "2026-04-10",
+          "prs": [
+            10906
           ]
         }
       ]
