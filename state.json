@@ -91,7 +91,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2506-10",
+  "last_processed_tag": "polkadot-stable2509-7",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37068,6 +37068,58 @@
           "published": "2026-04-10",
           "prs": [
             10906
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2509-7",
+      "prev_tag": "polkadot-stable2509-5",
+      "crates": [
+        {
+          "name": "cumulus-client-consensus-aura",
+          "version": "0.26.3",
+          "published": "2026-04-16",
+          "prs": [
+            11330
+          ]
+        },
+        {
+          "name": "frame-support",
+          "version": "43.0.2",
+          "published": "2026-04-16",
+          "prs": [
+            11567
+          ]
+        },
+        {
+          "name": "staging-xcm-executor",
+          "version": "22.0.1",
+          "published": "2026-04-16",
+          "prs": []
+        },
+        {
+          "name": "sc-authority-discovery",
+          "version": "0.53.1",
+          "published": "2026-04-16",
+          "prs": [
+            10954
+          ]
+        },
+        {
+          "name": "pallet-conviction-voting",
+          "version": "43.0.1",
+          "published": "2026-04-16",
+          "prs": [
+            11567
+          ]
+        },
+        {
+          "name": "pallet-mmr",
+          "version": "43.0.1",
+          "published": "2026-04-16",
+          "prs": [
+            11738
           ]
         }
       ]
