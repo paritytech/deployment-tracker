@@ -32,6 +32,13 @@
           "block_hash": "0x688f5766aa9c7550f3efa5a5af8aa5c564082f8b6a4b4fe24a690e47e448fcf0",
           "date": "2026-03-31T10:17:48+00:00",
           "block_url": "https://assethub-paseo.subscan.io/block/7041076"
+        },
+        {
+          "spec_version": 2001001,
+          "block_number": 7851017,
+          "block_hash": "0xc369b2da3079a9ab54f79f6dcf7e923f0c56713d6d8ef20cf36474abf01635f4",
+          "date": "2026-04-20T10:19:00+00:00",
+          "block_url": "https://assethub-paseo.subscan.io/block/7851017"
         }
       ]
     },
