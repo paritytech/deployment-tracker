@@ -17,7 +17,7 @@
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "last_seen_commit": "2cc2c883b5878e4b7596304a4d97916d27a472c8",
+      "last_seen_commit": "81b8fa34c03465fee384f5196c94c84eb80c5aa6",
       "upgrades": [
         {
           "spec_version": 2000006,
@@ -39,6 +39,13 @@
           "block_hash": "0xc369b2da3079a9ab54f79f6dcf7e923f0c56713d6d8ef20cf36474abf01635f4",
           "date": "2026-04-20T10:19:00+00:00",
           "block_url": "https://assethub-paseo.subscan.io/block/7851017"
+        },
+        {
+          "spec_version": 2002002,
+          "block_number": 8255205,
+          "block_hash": "0xc56b8b860d0537010f92d6a80a0a9174bbb1e757345fb6f2b6514e999518a6b6",
+          "date": "2026-04-30T09:48:48+00:00",
+          "block_url": "https://assethub-paseo.subscan.io/block/8255205"
         }
       ]
     },
