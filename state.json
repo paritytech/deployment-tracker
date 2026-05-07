@@ -119,7 +119,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2603-1",
+  "last_processed_tag": "polkadot-stable2506-11",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37375,6 +37375,36 @@
           "published": "2026-05-04",
           "prs": [
             11567
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2506-11",
+      "prev_tag": "polkadot-stable2506-10",
+      "crates": [
+        {
+          "name": "staging-xcm",
+          "version": "17.0.1",
+          "published": "2026-05-07",
+          "prs": [
+            11964
+          ]
+        },
+        {
+          "name": "pallet-mmr",
+          "version": "41.0.1",
+          "published": "2026-05-07",
+          "prs": [
+            11738
+          ]
+        },
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "24.0.3",
+          "published": "2026-05-07",
+          "prs": [
+            9178
           ]
         }
       ]
