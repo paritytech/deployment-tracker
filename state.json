@@ -119,7 +119,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2506-11",
+  "last_processed_tag": "polkadot-stable2603-2",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37406,6 +37406,148 @@
           "prs": [
             9178
           ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-2",
+      "prev_tag": "polkadot-stable2603-1",
+      "crates": [
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.25.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-ethereum-client",
+          "version": "0.21.0",
+          "published": "2026-05-08",
+          "prs": [
+            11856
+          ]
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2-fixtures",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-verification-primitives",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": [
+            11856
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.45.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-fixtures",
+          "version": "0.29.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.28.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "sc-network-sync",
+          "version": "0.55.1",
+          "published": "2026-05-08",
+          "prs": [
+            12017
+          ]
+        },
+        {
+          "name": "snowbridge-pallet-system",
+          "version": "0.21.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-inbound-queue-primitives",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm",
+          "version": "22.0.1",
+          "published": "2026-05-08",
+          "prs": [
+            11964
+          ]
+        },
+        {
+          "name": "snowbridge-pallet-outbound-queue-v2",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": [
+            11856
+          ]
+        },
+        {
+          "name": "snowbridge-pallet-outbound-queue",
+          "version": "0.21.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-outbound-queue-primitives",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-ethereum-client-fixtures",
+          "version": "0.29.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue",
+          "version": "0.21.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-system-v2",
+          "version": "0.10.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-outbound-queue-runtime-api",
+          "version": "0.21.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-test-utils",
+          "version": "0.11.0",
+          "published": "2026-05-08",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-runtime-test-common",
+          "version": "0.24.0",
+          "published": "2026-05-08",
+          "prs": []
         }
       ]
     }
