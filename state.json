@@ -17,7 +17,7 @@
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "last_seen_commit": "ed51b038e2c5150c86dac96ff65454836e17678e",
+      "last_seen_commit": "3cc805017a06203b83c54bdeeae70628fbf2c49d",
       "upgrades": [
         {
           "spec_version": 2000006,
@@ -62,7 +62,7 @@
       "ws": "wss://kusama-asset-hub-rpc.polkadot.io",
       "field_name": "AH Kusama",
       "block_explorer_url": "https://assethub-kusama.subscan.io",
-      "last_seen_commit": "e680a8f88821de20a03cc9410b6ea4e0fa54f9f9",
+      "last_seen_commit": "a9844e07552fe3ffe33919735cd95136ba741ede",
       "upgrades": [
         {
           "spec_version": 2001000,
@@ -93,7 +93,7 @@
       "ws": "wss://polkadot-asset-hub-rpc.polkadot.io",
       "field_name": "AH Polkadot",
       "block_explorer_url": "https://assethub-polkadot.subscan.io",
-      "last_seen_commit": "e680a8f88821de20a03cc9410b6ea4e0fa54f9f9",
+      "last_seen_commit": "a9844e07552fe3ffe33919735cd95136ba741ede",
       "upgrades": [
         {
           "spec_version": 2000007,
