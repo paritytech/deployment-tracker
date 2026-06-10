@@ -119,7 +119,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2603-3",
+  "last_processed_tag": "polkadot-stable2506-12",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37874,6 +37874,94 @@
           "prs": [
             11574
           ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2506-12",
+      "prev_tag": "polkadot-stable2506-11",
+      "crates": [
+        {
+          "name": "pallet-assets",
+          "version": "43.0.1",
+          "published": "2026-06-10",
+          "prs": []
+        },
+        {
+          "name": "collectives-westend-runtime",
+          "version": "20.0.2",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.26.2",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "cumulus-pallet-xcmp-queue",
+          "version": "0.21.2",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "people-rococo-runtime",
+          "version": "0.16.1",
+          "published": "2026-06-10",
+          "prs": []
+        },
+        {
+          "name": "coretime-westend-runtime",
+          "version": "0.16.1",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "sc-network-sync",
+          "version": "0.50.1",
+          "published": "2026-06-10",
+          "prs": [
+            12017
+          ]
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.20.1",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.17.1",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.32.2",
+          "published": "2026-06-10",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-rococo-runtime",
+          "version": "0.16.1",
+          "published": "2026-06-10",
+          "prs": []
         }
       ]
     }
