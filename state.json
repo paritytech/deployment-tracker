@@ -77,6 +77,13 @@
           "block_hash": "0x5b2df45b8f0dba96979d60024f0535c4c1c1a9ca9902fb463a2f26361b943243",
           "date": "2026-04-21T13:53:12+00:00",
           "block_url": "https://assethub-kusama.subscan.io/block/15873803"
+        },
+        {
+          "spec_version": 2003000,
+          "block_number": 17836634,
+          "block_hash": "0x0d9a97855e4f9907465988da493b7c0a512548acda73eaf1c89f35f669796d5d",
+          "date": "2026-06-12T09:39:36+00:00",
+          "block_url": "https://assethub-kusama.subscan.io/block/17836634"
         }
       ]
     },
@@ -115,6 +122,13 @@
           "block_hash": "0x9805a303cd05ca5e3c0c2440e243670730433432d11224b0574c392d0e0f61c5",
           "date": "2026-04-22T17:45:12+00:00",
           "block_url": "https://assethub-polkadot.subscan.io/block/14857500"
+        },
+        {
+          "spec_version": 2003000,
+          "block_number": 16946480,
+          "block_hash": "0xf0dbfb5b8245b176829fd0ba2ada2bafe273312e7a5b3913ef59e0482e89c696",
+          "date": "2026-06-12T09:42:48+00:00",
+          "block_url": "https://assethub-polkadot.subscan.io/block/16946480"
         }
       ]
     }
