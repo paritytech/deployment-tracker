@@ -119,7 +119,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2506-12",
+  "last_processed_tag": "polkadot-stable2509-9",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -37961,6 +37961,86 @@
           "name": "coretime-rococo-runtime",
           "version": "0.16.1",
           "published": "2026-06-10",
+          "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2509-9",
+      "prev_tag": "polkadot-stable2509-8",
+      "crates": [
+        {
+          "name": "collectives-westend-runtime",
+          "version": "23.0.1",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "cumulus-pallet-xcmp-queue",
+          "version": "0.23.1",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.23.2",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-rococo-runtime",
+          "version": "0.19.1",
+          "published": "2026-06-11",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.20.2",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.29.1",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.36.4",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-westend-runtime",
+          "version": "0.19.1",
+          "published": "2026-06-11",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "people-rococo-runtime",
+          "version": "0.19.1",
+          "published": "2026-06-11",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-precompiles",
+          "version": "0.2.1",
+          "published": "2026-06-11",
           "prs": []
         }
       ]
