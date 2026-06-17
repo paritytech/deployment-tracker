@@ -133,7 +133,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2509-9",
+  "last_processed_tag": "polkadot-stable2512-6",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -38055,6 +38055,80 @@
           "name": "pallet-assets-precompiles",
           "version": "0.2.1",
           "published": "2026-06-11",
+          "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2512-6",
+      "prev_tag": "polkadot-stable2512-5",
+      "crates": [
+        {
+          "name": "cumulus-pallet-xcmp-queue",
+          "version": "0.25.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-rococo-runtime",
+          "version": "0.21.1",
+          "published": "2026-06-17",
+          "prs": []
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.34.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "collectives-westend-runtime",
+          "version": "25.0.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.46.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.26.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.29.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-westend-runtime",
+          "version": "0.21.1",
+          "published": "2026-06-17",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "people-rococo-runtime",
+          "version": "0.21.1",
+          "published": "2026-06-17",
           "prs": []
         }
       ]
