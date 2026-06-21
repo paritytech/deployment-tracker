@@ -129,6 +129,13 @@
           "block_hash": "0xf0dbfb5b8245b176829fd0ba2ada2bafe273312e7a5b3913ef59e0482e89c696",
           "date": "2026-06-12T09:42:48+00:00",
           "block_url": "https://assethub-polkadot.subscan.io/block/16946480"
+        },
+        {
+          "spec_version": 2003001,
+          "block_number": 17297797,
+          "block_hash": "0xf73f152695549b97854998e6f74ead9f8bac56cc1093f9af01752a082b8c0903",
+          "date": "2026-06-21T11:54:48+00:00",
+          "block_url": "https://assethub-polkadot.subscan.io/block/17297797"
         }
       ]
     }
