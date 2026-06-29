@@ -17,7 +17,7 @@
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "last_seen_commit": "67f82f563e5f84dd56b45d97f11fc39abf884f1f",
+      "last_seen_commit": "874037cc786e7e1f8945060ecc1e44faec9a663a",
       "upgrades": [
         {
           "spec_version": 2000006,
@@ -62,7 +62,7 @@
       "ws": "wss://kusama-asset-hub-rpc.polkadot.io",
       "field_name": "AH Kusama",
       "block_explorer_url": "https://assethub-kusama.subscan.io",
-      "last_seen_commit": "791476d7de43537ecd940b1d96b9b2e0b54e9066",
+      "last_seen_commit": "a749558835f8dc167c6354d2226c907c8a2937bd",
       "upgrades": [
         {
           "spec_version": 2001000,
@@ -100,7 +100,7 @@
       "ws": "wss://polkadot-asset-hub-rpc.polkadot.io",
       "field_name": "AH Polkadot",
       "block_explorer_url": "https://assethub-polkadot.subscan.io",
-      "last_seen_commit": "791476d7de43537ecd940b1d96b9b2e0b54e9066",
+      "last_seen_commit": "a749558835f8dc167c6354d2226c907c8a2937bd",
       "upgrades": [
         {
           "spec_version": 2000007,
@@ -140,7 +140,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2512-6",
+  "last_processed_tag": "polkadot-stable2603-4",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -38137,6 +38137,117 @@
           "version": "0.21.1",
           "published": "2026-06-17",
           "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-4",
+      "prev_tag": "polkadot-stable2603-3",
+      "crates": [
+        {
+          "name": "snowbridge-beacon-primitives",
+          "version": "0.19.1",
+          "published": "2026-06-29",
+          "prs": [
+            11910
+          ]
+        },
+        {
+          "name": "cumulus-pallet-xcmp-queue",
+          "version": "0.26.1",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.32.1",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "collectives-westend-runtime",
+          "version": "26.1.1",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "snowbridge-runtime-common",
+          "version": "0.20.1",
+          "published": "2026-06-29",
+          "prs": [
+            11910
+          ]
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.45.1",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.25.2",
+          "published": "2026-06-29",
+          "prs": [
+            11910,
+            12176
+          ]
+        },
+        {
+          "name": "staging-xcm-executor",
+          "version": "25.2.0",
+          "published": "2026-06-29",
+          "prs": [
+            11910
+          ]
+        },
+        {
+          "name": "cumulus-client-consensus-aura",
+          "version": "0.29.2",
+          "published": "2026-06-29",
+          "prs": [
+            12113
+          ]
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.28.1",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "coretime-westend-runtime",
+          "version": "0.22.2",
+          "published": "2026-06-29",
+          "prs": [
+            12176
+          ]
+        },
+        {
+          "name": "cumulus-primitives-utility",
+          "version": "0.26.1",
+          "published": "2026-06-29",
+          "prs": [
+            11910
+          ]
+        },
+        {
+          "name": "pallet-beefy-mmr",
+          "version": "47.1.0",
+          "published": "2026-06-29",
+          "prs": [
+            12214
+          ]
         }
       ]
     }
