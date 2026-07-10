@@ -62,7 +62,7 @@
       "ws": "wss://kusama-asset-hub-rpc.polkadot.io",
       "field_name": "AH Kusama",
       "block_explorer_url": "https://assethub-kusama.subscan.io",
-      "last_seen_commit": "31ba937fdbc2bb307979a99005ef6af636e824ed",
+      "last_seen_commit": "477689fddba4475eca82ccf11edd339a09140aa3",
       "upgrades": [
         {
           "spec_version": 2001000,
@@ -100,7 +100,7 @@
       "ws": "wss://polkadot-asset-hub-rpc.polkadot.io",
       "field_name": "AH Polkadot",
       "block_explorer_url": "https://assethub-polkadot.subscan.io",
-      "last_seen_commit": "31ba937fdbc2bb307979a99005ef6af636e824ed",
+      "last_seen_commit": "477689fddba4475eca82ccf11edd339a09140aa3",
       "upgrades": [
         {
           "spec_version": 2000007,
