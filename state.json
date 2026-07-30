@@ -154,7 +154,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2606",
+  "last_processed_tag": "polkadot-stable2603-5",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -42013,6 +42013,28 @@
           "published": "2026-07-06",
           "prs": [
             11573
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-5",
+      "prev_tag": "polkadot-stable2603-4",
+      "crates": [
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "29.1.2",
+          "published": "2026-07-30",
+          "prs": [
+            12260
+          ]
+        },
+        {
+          "name": "polkadot-omni-node-lib",
+          "version": "0.14.2",
+          "published": "2026-07-30",
+          "prs": [
+            12388
           ]
         }
       ]
