@@ -154,7 +154,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2603-5",
+  "last_processed_tag": "polkadot-stable2606-1",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -42035,6 +42035,68 @@
           "published": "2026-07-30",
           "prs": [
             12388
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2606-1",
+      "prev_tag": "polkadot-stable2606",
+      "crates": [
+        {
+          "name": "sc-client-db",
+          "version": "0.54.1",
+          "published": "2026-08-10",
+          "prs": [
+            12106
+          ]
+        },
+        {
+          "name": "sp-database",
+          "version": "10.0.2",
+          "published": "2026-08-10",
+          "prs": [
+            12106
+          ]
+        },
+        {
+          "name": "sc-consensus-grandpa",
+          "version": "0.43.1",
+          "published": "2026-08-10",
+          "prs": [
+            12767
+          ]
+        },
+        {
+          "name": "polkadot-omni-node-lib",
+          "version": "0.18.1",
+          "published": "2026-08-10",
+          "prs": [
+            12388
+          ]
+        },
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "32.0.1",
+          "published": "2026-08-10",
+          "prs": [
+            12260
+          ]
+        },
+        {
+          "name": "pallet-multi-asset-bounties",
+          "version": "0.6.1",
+          "published": "2026-08-10",
+          "prs": [
+            12409
+          ]
+        },
+        {
+          "name": "pallet-utility",
+          "version": "49.0.1",
+          "published": "2026-08-10",
+          "prs": [
+            12534
           ]
         }
       ]
