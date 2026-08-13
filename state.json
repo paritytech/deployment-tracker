@@ -154,7 +154,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2606-1",
+  "last_processed_tag": "polkadot-stable2509-11",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -42097,6 +42097,20 @@
           "published": "2026-08-10",
           "prs": [
             12534
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2509-11",
+      "prev_tag": "polkadot-stable2509-9",
+      "crates": [
+        {
+          "name": "sc-consensus-grandpa",
+          "version": "0.38.1",
+          "published": "2026-08-13",
+          "prs": [
+            12767
           ]
         }
       ]
