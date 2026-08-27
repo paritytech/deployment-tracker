@@ -154,7 +154,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2512-8",
+  "last_processed_tag": "polkadot-stable2603-6",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -42131,6 +42131,28 @@
           "name": "sc-consensus-grandpa",
           "version": "0.40.1",
           "published": "2026-08-20",
+          "prs": [
+            12767
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-6",
+      "prev_tag": "polkadot-stable2603-5",
+      "crates": [
+        {
+          "name": "sc-consensus-beefy",
+          "version": "35.0.1",
+          "published": "2026-08-27",
+          "prs": [
+            12812
+          ]
+        },
+        {
+          "name": "sc-consensus-grandpa",
+          "version": "0.41.1",
+          "published": "2026-08-27",
           "prs": [
             12767
           ]
