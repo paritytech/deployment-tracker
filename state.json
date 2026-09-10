@@ -17,7 +17,7 @@
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "last_seen_commit": "71d8880c1d089d5478a2738ddd0fa7f12b9f7057",
+      "last_seen_commit": "181337890d9bfc155fb3a64d3d5c14fbd3925701",
       "upgrades": [
         {
           "spec_version": 2000006,
