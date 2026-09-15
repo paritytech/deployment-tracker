@@ -168,7 +168,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2603-6",
+  "last_processed_tag": "polkadot-stable2606-2",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -42170,6 +42170,1054 @@
           "prs": [
             12767
           ]
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2606-2",
+      "prev_tag": "polkadot-stable2606-1",
+      "crates": [
+        {
+          "name": "sc-consensus-beefy-rpc",
+          "version": "39.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-network",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-network-bridge",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "substrate-state-trie-migration-rpc",
+          "version": "53.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.41.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-hop",
+          "version": "0.2.1",
+          "published": "2026-09-15",
+          "prs": [
+            12662
+          ]
+        },
+        {
+          "name": "polkadot-availability-bitfield-distribution",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "testnet-parachains-constants",
+          "version": "25.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bp-bridge-hub-cumulus",
+          "version": "0.36.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-overseer",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-grandpa",
+          "version": "0.44.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "glutton-westend-runtime",
+          "version": "32.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-collator",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-authority-discovery",
+          "version": "0.60.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "parachains-common",
+          "version": "36.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-backing",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-inbound-queue-primitives",
+          "version": "0.18.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-subsystem-util",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "rococo-runtime",
+          "version": "36.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-slots",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-holder",
+          "version": "0.13.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "rococo-runtime-constants",
+          "version": "32.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-collation-generation",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-candidate-validation",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bp-bridge-hub-westend",
+          "version": "0.32.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-staking-async",
+          "version": "0.15.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-statement-store",
+          "version": "31.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-vesting-precompiles",
+          "version": "0.5.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-pallet-xcmp-queue",
+          "version": "0.32.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-psm",
+          "version": "0.5.1",
+          "published": "2026-09-15",
+          "prs": [
+            12245
+          ]
+        },
+        {
+          "name": "sc-offchain",
+          "version": "54.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-dispute-coordinator",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-uapi",
+          "version": "0.15.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-omni-node",
+          "version": "0.20.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm-builder",
+          "version": "29.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-rpc-spec-v2",
+          "version": "0.60.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "substrate-frame-rpc-system",
+          "version": "54.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "substrate-frame-rpc-support",
+          "version": "55.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-provisioner",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-runtime-api",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-babe",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "xcm-simulator",
+          "version": "30.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-epochs",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-rpc-server",
+          "version": "32.1.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-pow",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-sync-state-rpc",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-approval-voting-parallel",
+          "version": "0.16.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-client-api",
+          "version": "47.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-light",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-minimal-node",
+          "version": "0.38.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "parachains-runtimes-test-utils",
+          "version": "37.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-subsystem",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "westend-runtime-constants",
+          "version": "32.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-babe-rpc",
+          "version": "0.60.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets",
+          "version": "53.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-cli",
+          "version": "38.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-gossip",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "asset-test-utils",
+          "version": "39.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-prospective-parachains",
+          "version": "32.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-metrics",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "staging-node-inspect",
+          "version": "0.38.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-eth-rpc",
+          "version": "0.21.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-grandpa-rpc",
+          "version": "0.45.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-inprocess-interface",
+          "version": "0.38.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "coretime-westend-runtime",
+          "version": "0.30.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-informant",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-network-protocol",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "frame-benchmarking-cli",
+          "version": "60.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "substrate-rpc-client",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-rpc-api",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "emulated-integration-tests-common",
+          "version": "38.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-chain-spec",
+          "version": "52.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-precompiles",
+          "version": "0.11.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "frame-support",
+          "version": "48.1.0",
+          "published": "2026-09-15",
+          "prs": [
+            12245
+          ]
+        },
+        {
+          "name": "polkadot-availability-distribution",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-fixtures",
+          "version": "0.15.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network",
+          "version": "0.59.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm-executor",
+          "version": "28.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "westend-runtime",
+          "version": "37.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-pallet-aura-ext",
+          "version": "0.30.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-chain-selection",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bp-asset-hub-rococo",
+          "version": "0.32.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-pvf",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-gossip-support",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-rpc",
+          "version": "55.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-av-store",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-pvf-checker",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "staging-chain-spec-builder",
+          "version": "20.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-chain-api",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-cli",
+          "version": "0.62.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-statement",
+          "version": "0.42.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sp-blockchain",
+          "version": "46.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "xcm-simulator-example",
+          "version": "31.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "frame-remote-externalities",
+          "version": "0.61.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm",
+          "version": "24.1.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-election-provider-multi-phase",
+          "version": "50.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-types",
+          "version": "0.23.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "collectives-westend-runtime",
+          "version": "34.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-broker",
+          "version": "0.29.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-nft-fractionalization",
+          "version": "34.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-bootnodes",
+          "version": "0.12.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bp-asset-hub-westend",
+          "version": "0.31.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-nomination-pools-benchmarking",
+          "version": "48.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-xcm-bridge-hub-router",
+          "version": "0.28.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-voter-bags",
+          "version": "37.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-service",
+          "version": "0.38.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue",
+          "version": "0.29.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "subkey",
+          "version": "35.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "people-westend-runtime",
+          "version": "0.30.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-approval-distribution",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-contracts-mock-network",
+          "version": "29.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "assets-common",
+          "version": "0.37.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2-fixtures",
+          "version": "0.18.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-manual-seal",
+          "version": "0.60.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-streams",
+          "version": "0.11.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-state-trie-migration",
+          "version": "56.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-parachains-inherent",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-runtime-parachains",
+          "version": "29.0.0",
+          "published": "2026-09-15",
+          "prs": [
+            12844
+          ]
+        },
+        {
+          "name": "cumulus-relay-chain-interface",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-sync",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "frame-omni-bencher",
+          "version": "0.24.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "xcm-emulator",
+          "version": "0.35.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-pallet-parachain-system",
+          "version": "0.30.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.54.0",
+          "published": "2026-09-15",
+          "prs": [
+            12245
+          ]
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2",
+          "version": "0.18.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-omni-node-lib",
+          "version": "0.20.0",
+          "published": "2026-09-15",
+          "prs": [
+            12662
+          ]
+        },
+        {
+          "name": "polkadot-availability-recovery",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "frame-storage-access-test-runtime",
+          "version": "0.11.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sp-runtime-interface-proc-macro",
+          "version": "21.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-jemalloc-shim",
+          "version": "0.8.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-cli",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-beefy",
+          "version": "38.0.0",
+          "published": "2026-09-15",
+          "prs": [
+            12812
+          ]
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.36.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-mixnet",
+          "version": "0.29.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-bitfield-signing",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-network-transactions",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-service",
+          "version": "0.61.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive",
+          "version": "0.19.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-rpc",
+          "version": "35.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "substrate-wasm-builder",
+          "version": "34.0.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-consensus-aura",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot",
+          "version": "37.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus",
+          "version": "0.58.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-accumulate-and-forward",
+          "version": "0.4.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-parachain-inherent",
+          "version": "0.27.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": [
+            12582
+          ]
+        },
+        {
+          "name": "polkadot-runtime-common",
+          "version": "31.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-consensus-relay-chain",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-core-approval-voting",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "penpal-runtime",
+          "version": "0.45.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "mmr-gadget",
+          "version": "54.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-pov-recovery",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-runtime-test-common",
+          "version": "0.31.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-freezer",
+          "version": "0.18.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-staking-async-rc-runtime-constants",
+          "version": "0.13.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-primitives-utility",
+          "version": "0.32.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-xcm-precompiles",
+          "version": "0.9.1",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-consensus-common",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "pallet-xcm",
+          "version": "29.1.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-dispute-distribution",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-service",
+          "version": "38.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "sc-consensus-aura",
+          "version": "0.59.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-sdk",
+          "version": "2606.4.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-statement-distribution",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "polkadot-node-subsystem-types",
+          "version": "33.0.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bp-bridge-hub-rococo",
+          "version": "0.36.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-test-utils",
+          "version": "0.38.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-pallet-solo-to-para",
+          "version": "0.30.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-rpc-interface",
+          "version": "0.33.0",
+          "published": "2026-09-15",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-fixtures",
+          "version": "0.37.0",
+          "published": "2026-09-15",
+          "prs": []
         }
       ]
     }
