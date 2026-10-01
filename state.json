@@ -168,7 +168,7 @@
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2606-2",
+  "last_processed_tag": "polkadot-stable2603-7",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -43217,6 +43217,18 @@
           "name": "snowbridge-pallet-inbound-queue-fixtures",
           "version": "0.37.0",
           "published": "2026-09-15",
+          "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-7",
+      "prev_tag": "polkadot-stable2603-6",
+      "crates": [
+        {
+          "name": "sc-rpc-server",
+          "version": "28.1.0",
+          "published": "2026-10-01",
           "prs": []
         }
       ]
