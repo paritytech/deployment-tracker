@@ -17,7 +17,7 @@
       "ws": "wss://sys.ibp.network/asset-hub-paseo",
       "field_name": "AH Paseo",
       "block_explorer_url": "https://assethub-paseo.subscan.io",
-      "last_seen_commit": "0b3eb1743869e10080a16da3931857d8ef287cde",
+      "last_seen_commit": "c1ff3eb63f1212389a2beeaf24f242548a56bbb0",
       "upgrades": [
         {
           "spec_version": 2000006,
@@ -178,11 +178,18 @@
           "block_hash": "0x180ea98324a193f73ba26c96e548a7847789beed2768f78f2df9028cb2c5afa1",
           "date": "2026-10-26T11:54:48+00:00",
           "block_url": "https://assethub-polkadot.subscan.io/block/22317500"
+        },
+        {
+          "spec_version": 2005002,
+          "block_number": 22472812,
+          "block_hash": "0x252064ff8fe2eb0145f8294de234646861c3ff202cff690bb0c05d80ca1364ce",
+          "date": "2026-10-30T04:30:00+00:00",
+          "block_url": "https://assethub-polkadot.subscan.io/block/22472812"
         }
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2609",
+  "last_processed_tag": "polkadot-stable2603-8",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -47311,6 +47318,48 @@
           "name": "xcm-emulator",
           "version": "0.36.0",
           "published": "2026-10-12",
+          "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2603-8",
+      "prev_tag": "polkadot-stable2603-7",
+      "crates": [
+        {
+          "name": "snowbridge-beacon-primitives",
+          "version": "0.19.2",
+          "published": "2026-10-29",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-runtime-common",
+          "version": "0.20.2",
+          "published": "2026-10-29",
+          "prs": []
+        },
+        {
+          "name": "cumulus-primitives-utility",
+          "version": "0.26.2",
+          "published": "2026-10-29",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.25.3",
+          "published": "2026-10-29",
+          "prs": []
+        },
+        {
+          "name": "pallet-asset-conversion",
+          "version": "28.0.1",
+          "published": "2026-10-29",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm-executor",
+          "version": "25.3.0",
+          "published": "2026-10-29",
           "prs": []
         }
       ]
