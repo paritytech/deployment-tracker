@@ -185,11 +185,18 @@
           "block_hash": "0x252064ff8fe2eb0145f8294de234646861c3ff202cff690bb0c05d80ca1364ce",
           "date": "2026-10-30T04:30:00+00:00",
           "block_url": "https://assethub-polkadot.subscan.io/block/22472812"
+        },
+        {
+          "spec_version": 2005003,
+          "block_number": 23038474,
+          "block_hash": "0x44b6866f114586f9b9d2ce7f62004e35183f84663f872cb7aa8d07e59f2f98c8",
+          "date": "2026-11-12T13:43:12+00:00",
+          "block_url": "https://assethub-polkadot.subscan.io/block/23038474"
         }
       ]
     }
   ],
-  "last_processed_tag": "polkadot-stable2606-5",
+  "last_processed_tag": "polkadot-stable2609-2",
   "releases": [
     {
       "tag": "polkadot-stable2407-1",
@@ -48534,6 +48541,352 @@
           "name": "pallet-revive-fixtures",
           "version": "0.15.3",
           "published": "2026-11-05",
+          "prs": []
+        }
+      ]
+    },
+    {
+      "tag": "polkadot-stable2609-2",
+      "prev_tag": "polkadot-stable2609-1",
+      "crates": [
+        {
+          "name": "polkadot",
+          "version": "42.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-xcm-precompiles",
+          "version": "0.13.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-types",
+          "version": "0.2.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-freezer",
+          "version": "0.19.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "rococo-runtime",
+          "version": "40.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "asset-hub-rococo-runtime",
+          "version": "0.46.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-cli",
+          "version": "43.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets",
+          "version": "54.1.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-election-provider-multi-block",
+          "version": "0.13.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "xcm-simulator-example",
+          "version": "34.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-nfts",
+          "version": "45.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-inprocess-interface",
+          "version": "0.43.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "cumulus-client-service",
+          "version": "0.43.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-omni-node-lib",
+          "version": "0.25.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2",
+          "version": "0.23.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "frame-benchmarking-cli",
+          "version": "64.0.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive",
+          "version": "0.22.0",
+          "published": "2026-11-12",
+          "prs": [
+            13617
+          ]
+        },
+        {
+          "name": "emulated-integration-tests-common",
+          "version": "43.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-jemalloc-shim",
+          "version": "0.13.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-inbound-queue-primitives",
+          "version": "0.23.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "asset-hub-westend-runtime",
+          "version": "0.59.0",
+          "published": "2026-11-12",
+          "prs": [
+            13617
+          ]
+        },
+        {
+          "name": "penpal-runtime",
+          "version": "0.50.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-uniques",
+          "version": "51.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "frame-support",
+          "version": "49.1.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-nft-fractionalization",
+          "version": "36.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-v2-fixtures",
+          "version": "0.23.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "frame-omni-bencher",
+          "version": "0.29.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-uapi",
+          "version": "0.15.7",
+          "published": "2026-11-12",
+          "prs": [
+            13617
+          ]
+        },
+        {
+          "name": "revive-dev-runtime",
+          "version": "0.13.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "asset-test-utils",
+          "version": "44.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "yet-another-parachain-runtime",
+          "version": "0.18.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-xcm",
+          "version": "31.1.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-psm",
+          "version": "0.8.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-voter-bags",
+          "version": "41.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-omni-node",
+          "version": "0.25.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue",
+          "version": "0.34.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-rococo-runtime",
+          "version": "0.41.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-child-bounties",
+          "version": "50.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-staking-async",
+          "version": "0.17.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-asset-conversion-precompiles",
+          "version": "0.9.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-bounties",
+          "version": "50.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "assets-common",
+          "version": "0.42.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-vesting-precompiles",
+          "version": "0.8.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "bridge-hub-test-utils",
+          "version": "0.43.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "cumulus-relay-chain-minimal-node",
+          "version": "0.43.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-precompiles",
+          "version": "0.14.0",
+          "published": "2026-11-12",
+          "prs": [
+            13617
+          ]
+        },
+        {
+          "name": "bridge-hub-westend-runtime",
+          "version": "0.38.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-eth-rpc",
+          "version": "0.25.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-revive-fixtures",
+          "version": "0.17.0",
+          "published": "2026-11-12",
+          "prs": [
+            13617
+          ]
+        },
+        {
+          "name": "polkadot-collator-protocol",
+          "version": "36.0.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-sdk",
+          "version": "2609.3.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "staging-xcm-executor",
+          "version": "29.0.2",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "pallet-assets-holder",
+          "version": "0.14.1",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "polkadot-service",
+          "version": "43.0.0",
+          "published": "2026-11-12",
+          "prs": []
+        },
+        {
+          "name": "snowbridge-pallet-inbound-queue-fixtures",
+          "version": "0.42.0",
+          "published": "2026-11-12",
           "prs": []
         }
       ]
