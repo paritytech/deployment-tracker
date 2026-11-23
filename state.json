@@ -98,6 +98,13 @@
           "block_hash": "0x916da88c06cee640508dd1d9a7d94abae5c1730b9d30f9fab943e57cbeb689d0",
           "date": "2026-10-29T14:42:00+00:00",
           "block_url": "https://assethub-kusama.subscan.io/block/23159493"
+        },
+        {
+          "spec_version": 2005003,
+          "block_number": 24178151,
+          "block_hash": "0xce530a190cc83d755804c9e5e872ae45ed7a24e868e6c1667a1f5eb1b3f5c953",
+          "date": "2026-11-23T14:47:12+00:00",
+          "block_url": "https://assethub-kusama.subscan.io/block/24178151"
         }
       ]
     },
